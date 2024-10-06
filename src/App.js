@@ -1,25 +1,62 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import LayoutComponent from "./components/LayoutComponent";
+import AdminLayoutComponent from "./components/AdminLayoutComponent";
+import Admin from "./pages/Admin";
+import Book from "./pages/Book";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
+import { AuthContextProvider } from "./context/authContext";
+import { AppointmentProvider } from "./context/AppointmentContext";
 
-function App() {
+import AdminRoute from "./components/AdminRoute"; // Import the AdminRoute component
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthContextProvider>
+      <AppointmentProvider>
+        <Router>
+          <Routes>
+            {/* Public Routes */}
+            <Route
+              path="*"
+              element={
+                <LayoutComponent>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/book" element={<Book />} />
+                    <Route path="/signin" element={<SignIn />} />
+                    <Route path="/signup" element={<SignUp />} />
+                  </Routes>
+                </LayoutComponent>
+              }
+            />
+
+            {/* Admin Routes */}
+            <Route
+              path="/admin/*"
+              element={
+                <AdminLayoutComponent>
+                  <Routes>
+                    <Route
+                      path=""
+                      element={
+                        <AdminRoute adminOnly={true}>
+                          <Admin />
+                        </AdminRoute>
+                      }
+                    />
+                    {/* Add more admin-specific routes here if needed */}
+                  </Routes>
+                </AdminLayoutComponent>
+              }
+            />
+          </Routes>
+        </Router>
+      </AppointmentProvider>
+    </AuthContextProvider>
   );
-}
+};
 
 export default App;

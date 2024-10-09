@@ -1,7 +1,8 @@
 import React from "react";
-import { SmileOutlined } from "@ant-design/icons";
+import { SmileOutlined, CloseOutlined } from "@ant-design/icons";
 import { Timeline, Popover } from "antd";
 import AppointmentEditForm from "./AppointmentEditForm";
+import useAdminDeleteAppointment from "../hooks/adminDeleteAppointment";
 
 const DayCalendar = ({
   selectedDate,
@@ -10,6 +11,8 @@ const DayCalendar = ({
   isAdmin,
   appointments,
 }) => {
+  const { deleteAppointment } = useAdminDeleteAppointment();
+
   const hours = [
     "07:00",
     "08:00",
@@ -30,6 +33,11 @@ const DayCalendar = ({
   const appointmentsForSelectedDate = appointments?.filter(
     (app) => app.date === selectedDate
   );
+
+  const handleDelete = async (appointmentId) => {
+    await deleteAppointment(appointmentId);
+    console.log("Deleting appointment with ID:", appointmentId);
+  };
 
   const timelineItems = hours.map((time) => {
     // Find the appointment for the current time
@@ -61,10 +69,24 @@ const DayCalendar = ({
           borderBottom: "1px solid #ccc",
           padding: "8px 0",
           backgroundColor: !isAdmin && isTaken ? "#ffcccc" : "transparent", // Light red background for taken slots if not admin
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        {time} -{" "}
-        {isTaken ? (isAdmin ? appointment.username : "Taken") : "Available"}
+        <span>
+          {time} -{" "}
+          {isTaken ? (isAdmin ? appointment.username : "Taken") : "Available"}
+        </span>
+        {isAdmin && isTaken && (
+          <CloseOutlined
+            style={{ color: "red", cursor: "pointer" }}
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent triggering the parent click event
+              handleDelete(appointment?._id);
+            }}
+          />
+        )}
       </div>
     );
 

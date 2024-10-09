@@ -25,16 +25,18 @@ const AppointmentEditForm = ({ appointment }) => {
   const [form] = Form.useForm();
   const [formValues, setFormValues] = useState({});
 
+  const initialValues = {
+    appointmentId: appointment?._id,
+    Input: appointment?.username,
+    TextArea: appointment?.desc,
+    length: appointment?.length,
+    DatePicker: appointment.date ? dayjs(appointment.date) : null,
+    TimePicker: appointment.time ? dayjs(appointment.time, "HH:mm") : null,
+  };
+
   // Set initial form values based on the appointment details
   useEffect(() => {
     if (appointment) {
-      const initialValues = {
-        appointmentId: appointment?._id,
-        Input: appointment.username,
-        TextArea: appointment.desc,
-        DatePicker: appointment.date ? dayjs(appointment.date) : null,
-        TimePicker: appointment.time ? dayjs(appointment.time, "HH:mm") : null,
-      };
       form.setFieldsValue(initialValues);
       setFormValues(initialValues);
     }
@@ -47,9 +49,10 @@ const AppointmentEditForm = ({ appointment }) => {
   const onFinish = () => {
     // Prepare the data for submission
     const dataToSubmit = {
-      appointmentId: formValues.appointmentId,
+      appointmentId: initialValues.appointmentId,
       username: formValues.Input,
       desc: formValues.TextArea,
+      length: formValues.length,
       date: formValues.DatePicker
         ? formValues.DatePicker.format("YYYY/MM/DD")
         : null,
@@ -63,6 +66,10 @@ const AppointmentEditForm = ({ appointment }) => {
   };
 
   const submitEditData = async (dataToSubmit) => {
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      console.log("no authtoken in submitEditData ");
+    }
     try {
       const res = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/admin/admineditappointment/${dataToSubmit.appointmentId}`,
@@ -71,7 +78,7 @@ const AppointmentEditForm = ({ appointment }) => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${authToken}`,
+            Authorization: `Bearer ${authToken}`,
           },
           body: JSON.stringify(dataToSubmit),
         }
@@ -97,13 +104,26 @@ const AppointmentEditForm = ({ appointment }) => {
         maxWidth: 600,
       }}
     >
-      <Form.Item label="ID" name="appointmentId">
+      {/* <Form.Item label="ID" name="appointmentId">
         <Input disabled />
-      </Form.Item>
+      </Form.Item> */}
 
       <Form.Item
         label="Input"
         name="Input"
+        rules={[
+          {
+            required: true,
+            message: "Please input!",
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        label="Duration in hours"
+        name="length"
         rules={[
           {
             required: true,

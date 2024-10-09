@@ -1,6 +1,6 @@
 import React from "react";
 import { SmileOutlined, CloseOutlined } from "@ant-design/icons";
-import { Timeline, Popover } from "antd";
+import { Timeline, Popover, message, Popconfirm, Button } from "antd";
 import AppointmentEditForm from "./AppointmentEditForm";
 import useAdminDeleteAppointment from "../hooks/adminDeleteAppointment";
 
@@ -34,22 +34,53 @@ const DayCalendar = ({
     (app) => app.date === selectedDate
   );
 
-  const handleDelete = async (appointmentId) => {
-    await deleteAppointment(appointmentId);
-    console.log("Deleting appointment with ID:", appointmentId);
+  // Create a set of taken hours based on appointments and their lengths
+  const takenHours = new Set();
+  appointmentsForSelectedDate.forEach((appointment) => {
+    const startHour = parseInt(appointment.time.split(":")[0], 10);
+    const length = parseInt(appointment.length, 10);
+
+    for (let i = 0; i < length; i++) {
+      const hourToMark = startHour + i;
+      if (hourToMark < 24) {
+        // Ensure we don't go beyond 24 hours
+        takenHours.add(hourToMark);
+      }
+    }
+  });
+
+  const confirm = async (e, appId) => {
+    console.log(e);
+    await handleDelete(appId);
+    message.success("Click on Yes");
+  };
+
+  const cancel = (e) => {
+    console.log(e);
+    message.error("Click on No");
+  };
+
+  const handleDelete = async (appId) => {
+    try {
+      await deleteAppointment(appId);
+      message.success("Appointment deleted successfully");
+      console.log("Deleting appointment with ID:", appId);
+    } catch (error) {
+      message.error("Failed to delete appointment");
+      console.error("Error deleting appointment:", error);
+    }
   };
 
   const timelineItems = hours.map((time) => {
-    // Find the appointment for the current time
+    const hour = parseInt(time.split(":")[0], 10);
     const appointment = appointmentsForSelectedDate.find(
       (app) => app.time === time
     );
 
-    const isTaken = !!appointment;
+    const isTaken = takenHours.has(hour);
 
     const handleOnClick = () => {
       if (isAdmin) {
-        console.log("Admin viewing appointment:", appointment?.length);
       } else if (!isTaken && isInteractive) {
         setSelectedTime(time);
       }
@@ -79,20 +110,31 @@ const DayCalendar = ({
           {isTaken ? (isAdmin ? appointment.username : "Taken") : "Available"}
         </span>
         {isAdmin && isTaken && (
-          <CloseOutlined
-            style={{ color: "red", cursor: "pointer" }}
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent triggering the parent click event
-              handleDelete(appointment?._id);
-            }}
-          />
+          <Popconfirm
+            title="Delete the task"
+            description="Are you sure to delete this task?"
+            onConfirm={() => handleDelete(appointment._id)}
+            onCancel={cancel}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger>Delete</Button>
+          </Popconfirm>
+
+          // <CloseOutlined
+          //   style={{ color: "red", cursor: "pointer" }}
+          //   onClick={(e) => {
+          //     e.stopPropagation(); // Prevent triggering the parent click event
+          //     handleDelete(appointment?._id);
+          //   }}
+          // />
         )}
       </div>
     );
 
     return {
       color: isTaken ? "red" : "green",
-      children: isAdmin ? (
+      children: (
         <Popover
           placement="bottom"
           content={content(appointment)}
@@ -100,8 +142,6 @@ const DayCalendar = ({
         >
           {appointmentDisplay}
         </Popover>
-      ) : (
-        appointmentDisplay
       ),
     };
   });

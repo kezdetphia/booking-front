@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/hu"; // Import Hungarian locale for dayjs
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter"; // Import the plugin
 import {
   Calendar,
   Col,
@@ -17,8 +18,9 @@ import dayLocaleData from "dayjs/plugin/localeData";
 import AppointmentModal from "../components/AppointmentModal";
 import { useAuth } from "../context/authContext";
 import { useAppointments } from "../context/AppointmentContext";
+
 dayjs.extend(dayLocaleData);
-// dayjs.locale("hu"); // Set dayjs to use Hungarian locale
+dayjs.extend(isSameOrAfter); // Extend dayjs with the plugin
 
 const Book = () => {
   const { user } = useAuth();
@@ -29,18 +31,23 @@ const Book = () => {
   const [selectedTime, setSelectedTime] = useState("");
 
   const currentYear = dayjs().year(); // Get the current year
+  const currentMonth = dayjs().month(); // Get the current month (0-indexed)
 
   const disabledDate = (current) => {
-    // Can not select days before today and today
-    return current && current < dayjs().endOf("day");
+    // Disable days before today
+    return current && current < dayjs().startOf("day");
   };
 
   const onDateSelect = (value) => {
-    setSelectedDate(value.format("YYYY/MM/DD"));
-    setModalOpen(true);
+    // Only open the modal if a specific date is selected
+    if (value.isSameOrAfter(dayjs(), "day")) {
+      setSelectedDate(value.format("YYYY/MM/DD"));
+      setModalOpen(true);
+    }
   };
 
   const onPanelChange = (value, mode) => {
+    // Handle panel change without opening the modal
     console.log("Panel changed:", value.format("YYYY-MM-DD"), mode);
   };
 
@@ -86,34 +93,31 @@ const Book = () => {
           <Calendar
             fullscreen={false}
             onSelect={onDateSelect}
+            disabledDate={disabledDate} // Disable past dates
             headerRender={({ value, type, onChange, onTypeChange }) => {
-              const start = 0;
-              const end = 12;
               const monthOptions = [];
-              let current = value.clone();
               const localeData = value.localeData();
-              const months = [];
-              for (let i = 0; i < 12; i++) {
-                current = current.month(i);
-                months.push(localeData.monthsShort(current));
-              }
-              for (let i = start; i < end; i++) {
+              const months = localeData.months(); // Get full month names
+
+              for (let i = currentMonth; i < 12; i++) {
                 monthOptions.push(
                   <Select.Option key={i} value={i} className="month-item">
-                    {months[i + 1]}
+                    {months[i]}
                   </Select.Option>
                 );
               }
+
               const year = currentYear;
               const month = value.month();
               const options = [];
-              for (let i = year - 10; i < year + 10; i += 1) {
+              for (let i = year; i <= year + (month === 10 ? 1 : 0); i += 1) {
                 options.push(
                   <Select.Option key={i} value={i} className="year-item">
                     {i}
                   </Select.Option>
                 );
               }
+
               return (
                 <div
                   style={{

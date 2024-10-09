@@ -17,6 +17,7 @@ export const AppointmentProvider = ({ children }) => {
   useEffect(() => {
     fetchAppointments();
   }, []);
+
   const fetchAppointments = async () => {
     try {
       const authToken = localStorage.getItem("authToken");

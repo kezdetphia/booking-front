@@ -9,7 +9,8 @@ const useAdminDeleteAppointment = () => {
     setLoading(true);
     setError(null);
 
-    console.log(process.env.REACT_APP_BACKEND_URL, appointmentId);
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) console.log("no authtoken in useAdminDeleteAppointment");
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/admin/admindeleteappointment/${appointmentId}`,
@@ -17,7 +18,7 @@ const useAdminDeleteAppointment = () => {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${authToken}`, // Add the authToken to the headers if needed
+            Authorization: `Bearer ${authToken}`, // Add the authToken to the headers if needed
           },
         }
       );

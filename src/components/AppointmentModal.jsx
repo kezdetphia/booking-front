@@ -7,6 +7,7 @@ const AppointmentModal = ({
   setSelectedTime,
   selectedTime,
   selectedDate,
+  appointments,
 }) => {
   const showDrawer = () => {
     setModalOpen(true);
@@ -37,6 +38,7 @@ const AppointmentModal = ({
           selectedDate={selectedDate}
           setSelectedTime={setSelectedTime}
           isInteractive={true}
+          appointments={appointments}
         />
       </Drawer>
     </>

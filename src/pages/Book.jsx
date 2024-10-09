@@ -22,13 +22,11 @@ dayjs.extend(dayLocaleData);
 
 const Book = () => {
   const { user } = useAuth();
-  const { appointments, setAppointments } = useAppointments();
+  const { appointments, addAppointment } = useAppointments();
   const [modalOpen, setModalOpen] = useState(false);
   const { token } = theme.useToken();
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
-
-  const authToken = localStorage.getItem("authToken");
 
   const currentYear = dayjs().year(); // Get the current year
 
@@ -46,6 +44,20 @@ const Book = () => {
     console.log("Panel changed:", value.format("YYYY-MM-DD"), mode);
   };
 
+  const submitAppointment = async () => {
+    //context function
+    await addAppointment({
+      userId: user?._id,
+      username: user?.username,
+      email: user?.email,
+      desc: "Appointment description",
+      date: selectedDate,
+      time: selectedTime,
+      length: "1 hour",
+      booked: true,
+    });
+  };
+
   const wrapperStyle = {
     display: "flex", // Add flex display
     justifyContent: "center", // Center horizontally
@@ -59,73 +71,6 @@ const Book = () => {
     borderRadius: token.borderRadiusLG,
   };
 
-  useEffect(() => {
-    getAppointments();
-  }, []);
-
-  const getAppointments = async () => {
-    try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/appointments/getappointments`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json", // Set the content type to JSON
-            Authorization: `Bearer ${authToken}`, // Add the authToken to the headers
-          },
-        }
-      );
-
-      if (!res.ok) throw Error("server res nok ok");
-      const data = await res.json();
-      setAppointments(data.appointments);
-    } catch (err) {
-      console.log("error while fetching apps", err);
-    }
-  };
-
-  const submitAppointment = async () => {
-    try {
-      // const authToken = localStorage.getItem("authToken");
-      const response = await fetch(
-        // `${process.env.REACT_APP_BACKEND_URL}/api/appointments/create`,
-        "http://localhost:3001/api/appointments/create",
-        {
-          method: "POST", // Specify the HTTP method
-          headers: {
-            "Content-Type": "application/json", // Set the content type to JSON
-            Authorization: `Bearer ${authToken}`, // Add the authToken to the headers
-          },
-          body: JSON.stringify({
-            userId: user?._id,
-            username: user?.username,
-            email: user?.email,
-            desc: "Appointment description",
-            date: selectedDate,
-            time: selectedTime,
-            length: "1 hour",
-            booked: true,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      // Refetch appointments to get the latest data
-      getAppointments();
-      console.log("Appointment created successfully:", data.appointment);
-    } catch (error) {
-      console.error("Error creating appointment:", error);
-    }
-  };
-
-  // const busyDays = appointments.map((app) => app.date === selectedDate);
-  // console.log("busy days", busyDays);
-
   return (
     <ConfigProvider locale={huHU}>
       <div style={wrapperStyle}>
@@ -135,8 +80,8 @@ const Book = () => {
             setModalOpen={setModalOpen}
             setSelectedTime={setSelectedTime}
             selectedTime={selectedTime}
-            appointments={appointments}
             selectedDate={selectedDate}
+            appointments={appointments}
           />
           <Calendar
             fullscreen={false}

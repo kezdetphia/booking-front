@@ -1,16 +1,15 @@
 import React from "react";
 import { SmileOutlined } from "@ant-design/icons";
-import { Timeline, Button, Popover } from "antd";
-import { useAppointments } from "../context/AppointmentContext";
+import { Timeline, Popover } from "antd";
+import AppointmentEditForm from "./AppointmentEditForm";
 
 const DayCalendar = ({
   selectedDate,
   setSelectedTime,
   isInteractive,
   isAdmin,
+  appointments,
 }) => {
-  const { appointments } = useAppointments();
-
   const hours = [
     "07:00",
     "08:00",
@@ -28,7 +27,7 @@ const DayCalendar = ({
   ];
 
   // Filter appointments for the selected date
-  const appointmentsForSelectedDate = appointments.filter(
+  const appointmentsForSelectedDate = appointments?.filter(
     (app) => app.date === selectedDate
   );
 
@@ -42,45 +41,45 @@ const DayCalendar = ({
 
     const handleOnClick = () => {
       if (isAdmin) {
-        console.log("Admin viewing appointment:", appointment);
+        console.log("Admin viewing appointment:", appointment?.length);
       } else if (!isTaken && isInteractive) {
         setSelectedTime(time);
       }
     };
-    const content = (
-      <div>
-        <p>Content</p>
-        <p>Content</p>
+
+    const content = (appointment) => {
+      if (!appointment) return null;
+      return <AppointmentEditForm appointment={appointment} />;
+    };
+
+    const appointmentDisplay = (
+      <div
+        onClick={handleOnClick}
+        style={{
+          cursor:
+            isAdmin || (!isTaken && isInteractive) ? "pointer" : "not-allowed",
+          borderBottom: "1px solid #ccc",
+          padding: "8px 0",
+          backgroundColor: !isAdmin && isTaken ? "#ffcccc" : "transparent", // Light red background for taken slots if not admin
+        }}
+      >
+        {time} -{" "}
+        {isTaken ? (isAdmin ? appointment.username : "Taken") : "Available"}
       </div>
     );
 
     return {
       color: isTaken ? "red" : "green",
-      children: (
-        <>
-          <Popover placement="bottom" content={content} title={"titl;e"}>
-            <div
-              onClick={handleOnClick}
-              style={{
-                cursor:
-                  isAdmin || (!isTaken && isInteractive)
-                    ? "pointer"
-                    : "not-allowed",
-                borderBottom: "1px solid #ccc",
-                padding: "8px 0",
-                backgroundColor:
-                  !isAdmin && isTaken ? "#ffcccc" : "transparent", // Light red background for taken slots if not admin
-              }}
-            >
-              {time} -{" "}
-              {isTaken
-                ? isAdmin
-                  ? appointment.username
-                  : "Taken"
-                : "Available"}
-            </div>
-          </Popover>
-        </>
+      children: isAdmin ? (
+        <Popover
+          placement="bottom"
+          content={content(appointment)}
+          title={"Appointment Details"}
+        >
+          {appointmentDisplay}
+        </Popover>
+      ) : (
+        appointmentDisplay
       ),
     };
   });
@@ -92,7 +91,6 @@ const DayCalendar = ({
         {
           color: "#00CCFF",
           dot: <SmileOutlined />,
-          // children: <p>Custom color testing</p>,
         },
       ]}
     />

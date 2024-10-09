@@ -3,9 +3,18 @@ import { useAuth } from "../context/authContext";
 import DayCalendar from "../components/DayCalendar";
 import { useAppointments } from "../context/AppointmentContext";
 
-function Admin({ appointmentDate }) {
+function AdminAppointments({ appointmentDate }) {
   const { appointments } = useAppointments();
   const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (appointments.length > 0) {
+      setLoading(false);
+    }
+  }, [appointments]);
+
+  console.log("admin appointments", appointments);
 
   // Filter appointments to only include those that match the appointmentDate
   const filteredAppointments = appointments.filter(
@@ -14,11 +23,14 @@ function Admin({ appointmentDate }) {
 
   return (
     <div>
-      {filteredAppointments.length > 0 ? (
+      {loading ? (
+        <div>Loading appointments...</div>
+      ) : filteredAppointments.length > 0 ? (
         <DayCalendar
           selectedDate={appointmentDate}
           isInteractive={true}
           isAdmin={user?.isAdmin}
+          appointments={appointments}
         />
       ) : (
         <div>No appointments for this date.</div>
@@ -27,4 +39,4 @@ function Admin({ appointmentDate }) {
   );
 }
 
-export default Admin;
+export default AdminAppointments;

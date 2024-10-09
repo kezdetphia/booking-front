@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 export const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState();
   const [isAuthenticated, setIsAuthenticated] = useState(undefined);
   const [authLoading, setAuthLoading] = useState(true);
 
@@ -38,7 +38,7 @@ export const AuthContextProvider = ({ children }) => {
   }, []);
 
   const setUserInfo = async (userDetails) => {
-    await localStorage.setItem("user", JSON.stringify(userDetails));
+    localStorage.setItem("user", JSON.stringify(userDetails));
     setUser(userDetails);
     setIsAuthenticated(true);
   };

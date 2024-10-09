@@ -1,23 +1,52 @@
-import React from "react";
-import { Layout, Menu, theme } from "antd";
+import React, { useState } from "react";
+import { Button, Drawer, Layout, Menu, theme } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/authContext"; // Import the useAuth hook
+import { useAuth } from "../context/authContext";
+import { UserOutlined } from "@ant-design/icons";
+import UserDrawer from "./userDrawer";
 
 const { Header, Content, Footer } = Layout;
 
 const LayoutComponent = ({ children }) => {
-  const { user, setUser } = useAuth(); // Access the user and setUser from context
-  const authToken = localStorage.getItem("authToken"); // Check for authToken
-  const navigate = useNavigate(); // Hook to programmatically navigate
+  const { user, setUser } = useAuth();
+  const authToken = localStorage.getItem("authToken");
+  const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [childrenDrawer, setChildrenDrawer] = useState(false);
+  const [selectedContent, setSelectedContent] = useState("");
 
-  // Function to handle logout
-  const handleLogout = () => {
-    localStorage.removeItem("authToken"); // Remove the authToken
-    setUser(null); // Clear user context
-    navigate("/signin"); // Redirect to sign-in page
+  const showDrawer = () => {
+    setDrawerOpen(true);
   };
 
-  // Define the links, including the admin link conditionally
+  const onClose = () => {
+    setDrawerOpen(false);
+  };
+
+  const showChildrenDrawer = () => {
+    setChildrenDrawer(true);
+  };
+
+  const onChildrenDrawerClose = () => {
+    setChildrenDrawer(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    setUser(null);
+    navigate("/signin");
+  };
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  // Function to close all drawers
+  const closeAllDrawers = () => {
+    setDrawerOpen(false);
+    setChildrenDrawer(false);
+  };
+
   const links = [
     {
       key: "Home",
@@ -25,13 +54,16 @@ const LayoutComponent = ({ children }) => {
     },
     {
       key: "Book",
-      label: <Link to="/book">Book</Link>,
+      label: (
+        <Link to="/book" onClick={closeAllDrawers}>
+          Book
+        </Link>
+      ),
     },
     {
       key: "Contact",
       label: <Link to="/contact">Contact</Link>,
     },
-    // Conditionally add the sign-up link if no authToken
     ...(!authToken
       ? [
           {
@@ -44,25 +76,11 @@ const LayoutComponent = ({ children }) => {
           },
         ]
       : []),
-    // Conditionally add the admin link
     ...(user && user.isAdmin
       ? [
           {
             key: "Admin",
             label: <Link to="/admin">Admin</Link>,
-          },
-        ]
-      : []),
-    // Conditionally add the logout link
-    ...(authToken
-      ? [
-          {
-            key: "Logout",
-            label: (
-              <span onClick={handleLogout} style={{ cursor: "pointer" }}>
-                Logout
-              </span>
-            ),
           },
         ]
       : []),
@@ -91,6 +109,12 @@ const LayoutComponent = ({ children }) => {
             minWidth: 0,
           }}
         />
+        <Button
+          type="text"
+          icon={<UserOutlined />}
+          onClick={toggleDrawer}
+          style={{ color: "white" }}
+        />
       </Header>
       <Content
         style={{
@@ -115,6 +139,48 @@ const LayoutComponent = ({ children }) => {
       >
         Ant Design ©{new Date().getFullYear()} Created by Ant UED
       </Footer>
+      <Drawer
+        title="Menu"
+        width={200}
+        closable={false}
+        onClose={onClose}
+        open={drawerOpen}
+      >
+        <h1
+          className="cursor-pointer"
+          onClick={() => {
+            showChildrenDrawer();
+            setSelectedContent("Profile");
+          }}
+        >
+          My Profile
+        </h1>
+        <h1
+          className={"cursor-pointer"}
+          onClick={() => {
+            showChildrenDrawer();
+            setSelectedContent("Appointments");
+          }}
+        >
+          My Appointments
+        </h1>
+
+        <Button type="primary" onClick={handleLogout}>
+          Logout
+        </Button>
+        <Drawer
+          title={selectedContent}
+          width={320}
+          closable={false}
+          onClose={onChildrenDrawerClose}
+          open={childrenDrawer}
+        >
+          <UserDrawer
+            selectedContent={selectedContent}
+            closeAllDrawers={closeAllDrawers}
+          />
+        </Drawer>
+      </Drawer>
     </Layout>
   );
 };

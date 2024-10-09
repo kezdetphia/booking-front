@@ -74,6 +74,18 @@ const SignIn = () => {
           >
             <Input prefix={<UserOutlined />} placeholder="Email Address" />
           </Form.Item>
+          {/* Phone number */}
+          <Form.Item
+            name="phoneNumber"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Phone Number!",
+              },
+            ]}
+          >
+            <Input prefix={<UserOutlined />} placeholder="Phone Number" />
+          </Form.Item>
 
           {/* //password */}
           <Form.Item

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Layout, Menu, theme } from "antd";
+import { Layout, Menu, Button, Drawer, theme } from "antd";
+import { Link } from "react-router-dom";
 import dayjs from "dayjs";
-import Admin from "../pages/Admin";
+import AdminAppointments from "../pages/AdminAppointments";
+// import AdminAllAppointments from "../pages/AdminAllAppointments";
 const { Header, Content } = Layout;
 
 const items = Array.from({ length: 15 }, (_, index) => {
@@ -24,7 +26,15 @@ const items = Array.from({ length: 15 }, (_, index) => {
 });
 
 const AdminLayoutComponent = () => {
-  const [appointmentDate, setAppointmentDate] = useState([]);
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  const todayDate = `${year}/${month}/${day}`;
+
+  const [appointmentDate, setAppointmentDate] = useState(todayDate);
+  const [open, setOpen] = useState(false);
+  const [componentToRender, setComponentToRender] = useState("Appointments");
 
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -40,7 +50,29 @@ const AdminLayoutComponent = () => {
     }
   };
 
-  console.log("appointmentDate", appointmentDate);
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
+
+  const sections = () => {
+    const links = ["Appointments", "All Appointments", "Users"];
+    return (
+      <>
+        <Link to="/home">Home</Link>
+        {links.map((link, index) => (
+          <div key={index}>
+            <Link to="#" onClick={() => setComponentToRender(link)}>
+              {link}
+            </Link>
+          </div>
+        ))}
+      </>
+    );
+  };
 
   return (
     <Layout>
@@ -48,9 +80,9 @@ const AdminLayoutComponent = () => {
         style={{
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between", // Align items to the ends
         }}
       >
-        <div className="demo-logo" />
         <Menu
           theme="dark"
           mode="horizontal"
@@ -62,6 +94,9 @@ const AdminLayoutComponent = () => {
             minWidth: 0,
           }}
         />
+        <Button type="primary" onClick={showDrawer}>
+          ☰
+        </Button>
       </Header>
       <Content
         style={{
@@ -76,9 +111,12 @@ const AdminLayoutComponent = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          <Admin appointmentDate={appointmentDate} />
+          <AdminAppointments appointmentDate={appointmentDate} />
         </div>
       </Content>
+      <Drawer width={300} title="Admin Menu" onClose={onClose} open={open}>
+        {sections()}
+      </Drawer>
     </Layout>
   );
 };

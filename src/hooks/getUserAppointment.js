@@ -7,7 +7,7 @@ const useUserAppointments = (userId) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchAppointments = async () => {
+    const getAppointmentsDb = async () => {
       try {
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/api/users/getuserappointments/${userId}`
@@ -26,7 +26,7 @@ const useUserAppointments = (userId) => {
     };
 
     if (userId) {
-      fetchAppointments();
+      getAppointmentsDb();
     }
   }, [userId]);
 

@@ -1,17 +1,17 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
-import LayoutComponent from "./components/LayoutComponent";
-import AdminLayoutComponent from "./components/AdminLayoutComponent";
-import Admin from "./pages/AdminAppointments";
-import Book from "./pages/Book";
-import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
+import Home from "./pages/user/Home";
+import LayoutComponent from "./components/user/LayoutComponent";
+import AdminLayoutComponent from "./components/admin/AdminLayoutComponent";
+
+import Book from "./pages/user/Book";
+import SignIn from "./pages/user/SignIn";
+import SignUp from "./pages/user/SignUp";
 import { AuthContextProvider } from "./context/authContext";
 import { AppointmentProvider } from "./context/AppointmentContext";
+import AdminRoute from "./components/admin/AdminRoute";
 
-import AdminRoute from "./components/AdminRoute"; // Import the AdminRoute component
-import AdminAppointments from "./pages/AdminAppointments";
+import AdminAppointments from "./pages/admin/AdminAppointments";
 
 const App = () => {
   return (

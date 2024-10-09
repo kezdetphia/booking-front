@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { Layout, Menu, Button, Drawer, theme } from "antd";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
-import AdminAppointments from "../pages/AdminAppointments";
-// import AdminAllAppointments from "../pages/AdminAllAppointments";
+import AdminMain from "../../pages/admin/AdminMain";
 const { Header, Content } = Layout;
 
 const items = Array.from({ length: 15 }, (_, index) => {
@@ -111,7 +110,8 @@ const AdminLayoutComponent = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          <AdminAppointments appointmentDate={appointmentDate} />
+          {/* <AdminAppointments appointmentDate={appointmentDate} /> */}
+          <AdminMain appointmentDate={appointmentDate} />
         </div>
       </Content>
       <Drawer width={300} title="Admin Menu" onClose={onClose} open={open}>

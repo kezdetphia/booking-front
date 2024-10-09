@@ -1,9 +1,9 @@
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../../context/authContext";
 import { Button } from "antd";
 import { Divider } from "antd";
 import { Link } from "react-router-dom";
 import { Avatar, List } from "antd";
-import useUserAppointments from "../hooks/getUserAppointment";
+import useUserAppointments from "../../hooks/getUserAppointment";
 
 function UserDrawer({ selectedContent, closeAllDrawers }) {
   const { user } = useAuth();

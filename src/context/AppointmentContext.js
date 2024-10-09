@@ -5,7 +5,7 @@ import { useAuth } from "./authContext";
 const AppointmentContext = createContext();
 
 // Custom hook to use the AppointmentContext
-export const useAppointments = () => useContext(AppointmentContext);
+export const useAppointmentContext = () => useContext(AppointmentContext);
 
 // Provider component
 export const AppointmentProvider = ({ children }) => {
@@ -15,10 +15,11 @@ export const AppointmentProvider = ({ children }) => {
 
   //fetching appointments
   useEffect(() => {
-    fetchAppointments();
+    getAppointmentsDb();
   }, []);
 
-  const fetchAppointments = async () => {
+  //Fetch all appointments from db
+  const getAppointmentsDb = async () => {
     try {
       const authToken = localStorage.getItem("authToken");
       if (!authToken) {
@@ -45,7 +46,8 @@ export const AppointmentProvider = ({ children }) => {
     }
   };
 
-  const addAppointment = async (newAppointment) => {
+  //POST fech an appointment to db
+  const postAppointmentDb = async (newAppointment) => {
     const tempId = Date.now();
     const tempAppointment = { ...newAppointment, id: tempId };
 
@@ -73,7 +75,7 @@ export const AppointmentProvider = ({ children }) => {
         }
       );
 
-      if (!res.ok) throw new Error("Server error in addAppointment context");
+      if (!res.ok) throw new Error("Server error in postAppointmentDb context");
 
       const data = await res.json();
 
@@ -86,7 +88,7 @@ export const AppointmentProvider = ({ children }) => {
       console.log("Current user before update:", user);
       console.log("New appointment ID:", data.appointment._id);
 
-      // Update the user's appointments array
+      // Update the user's appointments array on
       setUser((prevUser) => {
         const updatedUser = {
           ...prevUser,
@@ -100,7 +102,7 @@ export const AppointmentProvider = ({ children }) => {
       });
 
       // Fetch appointments again to ensure the list is up-to-date
-      await fetchAppointments();
+      await getAppointmentsDb();
     } catch (err) {
       console.log("Error while adding appointment in context:", err);
       setAppointments((prev) => prev.filter((app) => app.id !== tempId));
@@ -109,7 +111,7 @@ export const AppointmentProvider = ({ children }) => {
 
   return (
     <AppointmentContext.Provider
-      value={{ appointments, setAppointments, addAppointment }}
+      value={{ appointments, setAppointments, postAppointmentDb }}
     >
       {children}
     </AppointmentContext.Provider>

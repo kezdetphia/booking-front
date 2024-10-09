@@ -1,9 +1,9 @@
 import React from "react";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../../context/authContext";
 
 const Home = () => {
   return (
-    <div>
+    <div className="flex justify-center items-center bg-red-200">
       <h1>home</h1>
     </div>
   );

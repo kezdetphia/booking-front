@@ -24,6 +24,7 @@ dayjs.extend(isSameOrAfter); // Extend dayjs with the plugin
 
 const Book = () => {
   const { user } = useAuth();
+  console.log("book user", user);
   const { appointments, addAppointment } = useAppointments();
   const [modalOpen, setModalOpen] = useState(false);
   const { token } = theme.useToken();

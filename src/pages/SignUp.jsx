@@ -1,10 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message, Space } from "antd";
 import { useNavigate } from "react-router-dom";
+
 const SignUp = () => {
   const navigate = useNavigate();
   const authToken = localStorage.getItem("authToken");
+  const [form] = Form.useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     if (authToken) {
@@ -16,8 +20,9 @@ const SignUp = () => {
     console.log(values);
     registerUser(values);
   };
-  //
+
   const registerUser = async (values) => {
+    setIsSubmitting(true);
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/users/signup`,
@@ -30,14 +35,58 @@ const SignUp = () => {
         }
       );
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        setIsSubmitting(false);
+        messageApi.open({
+          type: "error",
+          content: "Registration was unsuccessful! Please try again!",
+        });
+
+        if (response.status === 400) {
+          // Display the error message under the appropriate field
+          form.setFields([
+            {
+              name: "email",
+              errors: data.message.includes("Email") ? [data.message] : [],
+            },
+            {
+              name: "username",
+              errors: data.message.includes("Username") ? [data.message] : [],
+            },
+            {
+              name: "phoneNumber",
+              errors: data.message.includes("Phone") ? [data.message] : [],
+            },
+            {
+              name: "password",
+              errors: data.message.includes("Password") ? [data.message] : [],
+            },
+          ]);
+        } else {
+          console.error("Unhandled error:", data.message);
+        }
+        return;
       }
 
-      const data = await response.json();
+      messageApi.open({
+        type: "success",
+        content: "User registered successfully!",
+      });
+
       console.log("User registered successfully:", data);
+      // Optionally redirect the user after successful registration
+      navigate("/signin");
     } catch (error) {
+      setIsSubmitting(false);
+      messageApi.open({
+        type: "error",
+        content: "Error registering user. Please try again later.",
+      });
       console.error("Error registering user:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -45,8 +94,11 @@ const SignUp = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="flex justify-center">Sign Up</h1>
       <div className="max-w-md mx-auto bg-white shadow-md rounded-md p-6">
+        {contextHolder}
         <Form
-          name="login"
+          scrollToFirstError={true}
+          form={form}
+          name="signup"
           initialValues={{
             remember: true,
           }}
@@ -55,44 +107,50 @@ const SignUp = () => {
           }}
           onFinish={onFinish}
         >
-          {/* //email */}
+          {/* Email */}
           <Form.Item
             name="email"
             rules={[
               {
-                required: false,
-                message: "Please input your Email Address!",
+                required: true,
+                type: "email",
+                message: "Please input a valid Email Address!",
               },
             ]}
+            hasFeedback
           >
             <Input prefix={<UserOutlined />} placeholder="Email Address" />
           </Form.Item>
-          {/* //username */}
+
+          {/* Username */}
           <Form.Item
             name="username"
             rules={[
               {
                 required: true,
-                message: "Please input your Username!",
+                message: "Choose a username",
               },
             ]}
+            hasFeedback
           >
             <Input prefix={<UserOutlined />} placeholder="Username" />
           </Form.Item>
-          {/* //phone number */}
+
+          {/* Phone Number */}
           <Form.Item
             name="phoneNumber"
             rules={[
               {
                 required: true,
-
-                message: "Please input your Phone Number!",
+                message: "Phone Number is required!",
               },
             ]}
+            hasFeedback
           >
             <Input prefix={<UserOutlined />} placeholder="Phone Number" />
           </Form.Item>
-          {/* //password */}
+
+          {/* Password */}
           <Form.Item
             name="password"
             rules={[
@@ -100,7 +158,12 @@ const SignUp = () => {
                 required: true,
                 message: "Please input your Password!",
               },
+              {
+                min: 6,
+                message: "Password must be at least 6 characters.",
+              },
             ]}
+            hasFeedback
           >
             <Input
               prefix={<LockOutlined />}
@@ -108,24 +171,42 @@ const SignUp = () => {
               placeholder="Password"
             />
           </Form.Item>
+
+          {/* Password Repeat */}
           <Form.Item
             name="passwordRepeat"
+            dependencies={["password"]}
+            hasFeedback
             rules={[
               {
                 required: true,
                 message: "Please input your Password again!",
               },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("Passwords do not match!"));
+                },
+              }),
             ]}
           >
             <Input
               prefix={<LockOutlined />}
               type="password"
-              placeholder="Password"
+              placeholder="Repeat Password"
             />
           </Form.Item>
+
           <Form.Item>
-            <Button block type="primary" htmlType="submit">
-              Register
+            <Button
+              block
+              type="primary"
+              htmlType="submit"
+              loading={isSubmitting}
+            >
+              {isSubmitting ? "Registering..." : "Register"}
             </Button>
             or <a href="/signin">Log in!</a>
           </Form.Item>
@@ -134,4 +215,5 @@ const SignUp = () => {
     </div>
   );
 };
+
 export default SignUp;

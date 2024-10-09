@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 
@@ -8,19 +8,21 @@ const SignIn = () => {
   const { setUserInfo } = useAuth();
   const navigate = useNavigate();
   const authToken = localStorage.getItem("authToken");
+  const [form] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage();
 
-  const onFinish = async (values) => {
-    console.log(values);
-    LoginUser(values);
-  };
-
-  //Redirect to home if logged in
   useEffect(() => {
     if (authToken) {
       navigate("/"); // Redirect to home if logged in
     }
   }, [authToken, navigate]);
-  const LoginUser = async (values) => {
+
+  const onFinish = async (values) => {
+    console.log(values);
+    loginUser(values);
+  };
+
+  const loginUser = async (values) => {
     try {
       const res = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/users/signin`,
@@ -33,18 +35,37 @@ const SignIn = () => {
         }
       );
 
+      const data = await res.json();
+
       if (!res.ok) {
-        throw new Error("Network res was not ok", Error);
+        if (res.status === 400) {
+          // Display a generic error message
+          messageApi.open({
+            type: "error",
+            content: "Username or password is incorrect.",
+          });
+        } else {
+          console.error("Unhandled error:", data.message);
+        }
+        return;
       }
 
-      if (res.status === 200) {
-        const data = await res.json();
-        console.log("User signed in successfully:", data);
-        localStorage.setItem("authToken", data.token);
-        await setUserInfo(data.userData);
-      }
+      console.log("User signed in successfully:", data);
+      localStorage.setItem("authToken", data.token);
+      await setUserInfo(data.userData);
+
+      messageApi.open({
+        type: "success",
+        content: "Login successful!",
+      });
+
+      navigate("/"); // Redirect to home after successful login
     } catch (error) {
-      console.error("Error registering user:", error);
+      console.error("Error signing in user:", error);
+      messageApi.open({
+        type: "error",
+        content: "Error signing in. Please try again later.",
+      });
     }
   };
 
@@ -52,7 +73,9 @@ const SignIn = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="flex justify-center">Sign In</h1>
       <div className="max-w-md mx-auto bg-white shadow-md rounded-md p-6">
+        {contextHolder}
         <Form
+          form={form}
           name="login"
           initialValues={{
             remember: true,
@@ -62,7 +85,7 @@ const SignIn = () => {
           }}
           onFinish={onFinish}
         >
-          {/* //email */}
+          {/* Email */}
           <Form.Item
             name="email"
             rules={[
@@ -74,20 +97,8 @@ const SignIn = () => {
           >
             <Input prefix={<UserOutlined />} placeholder="Email Address" />
           </Form.Item>
-          {/* Phone number */}
-          <Form.Item
-            name="phoneNumber"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Phone Number!",
-              },
-            ]}
-          >
-            <Input prefix={<UserOutlined />} placeholder="Phone Number" />
-          </Form.Item>
 
-          {/* //password */}
+          {/* Password */}
           <Form.Item
             name="password"
             rules={[
@@ -115,4 +126,5 @@ const SignIn = () => {
     </div>
   );
 };
+
 export default SignIn;

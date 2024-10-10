@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/user/Home";
-import LayoutComponent from "./components/user/LayoutComponent";
+import UserLayoutComponent from "./components/user/UserLayoutComponent";
 import AdminLayoutComponent from "./components/admin/AdminLayoutComponent";
 
 import Book from "./pages/user/Book";
@@ -23,14 +23,14 @@ const App = () => {
             <Route
               path="*"
               element={
-                <LayoutComponent>
+                <UserLayoutComponent>
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/book" element={<Book />} />
                     <Route path="/signin" element={<SignIn />} />
                     <Route path="/signup" element={<SignUp />} />
                   </Routes>
-                </LayoutComponent>
+                </UserLayoutComponent>
               }
             />
 

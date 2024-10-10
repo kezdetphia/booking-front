@@ -1,14 +1,16 @@
+// src/components/UserDrawer.jsx
+import React, { useState } from "react";
 import { useAuth } from "../../context/authContext";
-import { Button } from "antd";
-import { Divider } from "antd";
+import { Button, Divider, Drawer, Avatar, List } from "antd";
 import { Link } from "react-router-dom";
-import { Avatar, List } from "antd";
 import useGetUserAppointment from "../../hooks/useGetUserAppointment";
 
-function UserDrawer({ selectedContent, closeAllDrawers }) {
+function UserDrawer({ drawerOpen, onClose, handleLogout }) {
   const { user } = useAuth();
   const userId = user?._id;
   const { appointments } = useGetUserAppointment(userId);
+  const [childrenDrawer, setChildrenDrawer] = useState(false);
+  const [selectedContent, setSelectedContent] = useState("");
 
   const categorizeAppointments = (appointments) => {
     const now = new Date();
@@ -44,86 +46,122 @@ function UserDrawer({ selectedContent, closeAllDrawers }) {
 
   const personalData = [user?.username, user?.email];
 
+  const showChildrenDrawer = (content) => {
+    setSelectedContent(content);
+    setChildrenDrawer(true);
+  };
+
+  const onChildrenDrawerClose = () => {
+    setChildrenDrawer(false);
+  };
+
   return (
-    <>
-      {selectedContent === "Appointments" ? (
-        <div>
-          <Divider orientation="left" orientationMargin="0">
-            Today's Appointment
-          </Divider>
-          {todayAppointments.map((appointment, index) => (
-            <div className="flex flex-col" key={`today-${index}`}>
-              <div>
-                {appointment?.date} {appointment?.time}
-              </div>
-              <div>{appointment?.desc}</div>
-              <Divider />
-            </div>
-          ))}
-          <Divider orientation="left" orientationMargin="0">
-            Future Appointments
-          </Divider>
-          {future.length > 0 ? (
-            future.map((appointment, index) => (
-              <div className="flex flex-col" key={`future-${index}`}>
+    <Drawer
+      title="Menu"
+      width={200}
+      closable={false}
+      onClose={onClose}
+      open={drawerOpen}
+    >
+      <h1
+        className="cursor-pointer"
+        onClick={() => showChildrenDrawer("Profile")}
+      >
+        My Profile
+      </h1>
+      <h1
+        className="cursor-pointer"
+        onClick={() => showChildrenDrawer("Appointments")}
+      >
+        My Appointments
+      </h1>
+
+      <Button type="primary" onClick={handleLogout}>
+        Logout
+      </Button>
+
+      <Drawer
+        title={selectedContent}
+        width={320}
+        closable={false}
+        onClose={onChildrenDrawerClose}
+        open={childrenDrawer}
+      >
+        {selectedContent === "Appointments" ? (
+          <div>
+            <Divider orientation="left" orientationMargin="0">
+              Today's Appointment
+            </Divider>
+            {todayAppointments.map((appointment, index) => (
+              <div className="flex flex-col" key={`today-${index}`}>
                 <div>
                   {appointment?.date} {appointment?.time}
                 </div>
                 <div>{appointment?.desc}</div>
                 <Divider />
               </div>
-            ))
-          ) : (
-            <div>
-              <p>
-                No future appointments.{" "}
-                <Link to="/book" onClick={closeAllDrawers}>
-                  <Button type="primary">Book an appointment now</Button>
-                </Link>
-              </p>
-            </div>
-          )}
-        </div>
-      ) : selectedContent === "Profile" ? (
-        <>
-          <div className="flex justify-center">
-            <Avatar
-              style={{
-                backgroundColor: "#ffcccb",
-              }}
-            >
-              {user?.username?.charAt(0).toUpperCase()}
-            </Avatar>
-          </div>
-          <Divider orientation="center">{user?.username}</Divider>
-          <List
-            header={
+            ))}
+            <Divider orientation="left" orientationMargin="0">
+              Future Appointments
+            </Divider>
+            {future.length > 0 ? (
+              future.map((appointment, index) => (
+                <div className="flex flex-col" key={`future-${index}`}>
+                  <div>
+                    {appointment?.date} {appointment?.time}
+                  </div>
+                  <div>{appointment?.desc}</div>
+                  <Divider />
+                </div>
+              ))
+            ) : (
               <div>
-                <h1 className="font-bold">Personal Details</h1>
+                <p>
+                  No future appointments.{" "}
+                  <Link to="/book" onClick={onChildrenDrawerClose}>
+                    <Button type="primary">Book an appointment now</Button>
+                  </Link>
+                </p>
               </div>
-            }
-            footer={
-              <div className="flex justify-center">
-                <Link to="/book">
-                  <Button onClick={closeAllDrawers} type="primary">
-                    Book an appointment
-                  </Button>
-                </Link>
-              </div>
-            }
-            bordered
-            dataSource={personalData}
-            renderItem={(item) => <List.Item>{item}</List.Item>}
-          />
-        </>
-      ) : selectedContent === "settings" ? (
-        <h1>SETTINGS</h1>
-      ) : selectedContent === "notifications" ? (
-        <h1>NOTIFICATIONS</h1>
-      ) : (
-        <h1>DEFAULT CONTENT</h1>
-      )}
-    </>
+            )}
+          </div>
+        ) : selectedContent === "Profile" ? (
+          <>
+            <div className="flex justify-center">
+              <Avatar
+                style={{
+                  backgroundColor: "#ffcccb",
+                }}
+              >
+                {user?.username?.charAt(0).toUpperCase()}
+              </Avatar>
+            </div>
+            <Divider orientation="center">{user?.username}</Divider>
+            <List
+              header={
+                <div>
+                  <h1 className="font-bold">Personal Details</h1>
+                </div>
+              }
+              footer={
+                <div className="flex justify-center">
+                  <Link to="/book">
+                    <Button onClick={onChildrenDrawerClose} type="primary">
+                      Book an appointment
+                    </Button>
+                  </Link>
+                </div>
+              }
+              bordered
+              dataSource={personalData}
+              renderItem={(item) => <List.Item>{item}</List.Item>}
+            />
+          </>
+        ) : (
+          <h1>DEFAULT CONTENT</h1>
+        )}
+      </Drawer>
+    </Drawer>
   );
 }
 

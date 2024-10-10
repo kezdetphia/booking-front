@@ -5,7 +5,7 @@ import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 
 const SignIn = () => {
-  const { setUserInfo, setUser } = useAuth();
+  const { setUser } = useAuth();
   const navigate = useNavigate();
   const authToken = localStorage.getItem("authToken");
   const [form] = Form.useForm();
@@ -52,6 +52,7 @@ const SignIn = () => {
 
       console.log("User signed in successfully:", data);
       localStorage.setItem("authToken", data.token);
+      console.log("signing token", data?.token);
       // await setUserInfo(data.userData);
       setUser(data.userData);
       messageApi.open({

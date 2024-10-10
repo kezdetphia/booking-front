@@ -7,12 +7,31 @@ export const AuthContextProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(undefined);
   const [authLoading, setAuthLoading] = useState(true);
 
+  console.log("AuthContextProvider", user);
+
   useEffect(() => {
+    console.log("AuthContextProvider useffect", user);
     const setUserAuthenticated = async () => {
       try {
         const token = localStorage.getItem("authToken");
 
         if (token) {
+          const res = await fetch("http://localhost:3001/api/users/getmyuser", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          });
+
+          if (!res.ok) {
+            throw new Error("Authcontext user fetch went wrong a bit");
+          }
+
+          const data = await res.json();
+          console.log("home userrrr from token", data.user);
+          setUser(data.user);
+
           // const userDetails = localStorage.getItem("user");
           // if (userDetails) {
           //   setUser(JSON.parse(userDetails));
@@ -42,7 +61,7 @@ export const AuthContextProvider = ({ children }) => {
   // const setUserInfo = async (userDetails) => {
   //   localStorage.setItem("user", JSON.stringify(userDetails));
   //   setUser(userDetails);
-  //   setIsAuthenticated(true);
+  // setIsAuthenticated(true);
   // };
 
   return (

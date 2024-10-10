@@ -10,6 +10,7 @@ export const useAppointmentContext = () => useContext(AppointmentContext);
 // Provider component
 export const AppointmentProvider = ({ children }) => {
   const { setUser, user } = useAuth();
+  console.log("AppointmentProvider", user);
   const [appointments, setAppointments] = useState([]);
   // const [updateAppointmentFetch, setUpdateAppointmentFetch] = useState(false)
 

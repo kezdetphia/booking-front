@@ -1,7 +1,7 @@
-// src/hooks/useUserAppointments.js
+// src/hooks/useGetUserAppointment.js
 import { useState, useEffect } from "react";
 
-const useUserAppointments = (userId) => {
+const useGetUserAppointment = (userId) => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,4 +33,4 @@ const useUserAppointments = (userId) => {
   return { appointments, loading, error };
 };
 
-export default useUserAppointments;
+export default useGetUserAppointment;

@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/user/Home";
-import LayoutComponent from "./components/user/LayoutComponent";
+import UserLayoutComponent from "./components/user/UserLayoutComponent";
 import AdminLayoutComponent from "./components/admin/AdminLayoutComponent";
 
 import Book from "./pages/user/Book";
@@ -11,7 +11,7 @@ import { AuthContextProvider } from "./context/authContext";
 import { AppointmentProvider } from "./context/AppointmentContext";
 import AdminRoute from "./components/admin/AdminRoute";
 
-import AdminAppointments from "./pages/admin/AdminAppointments";
+import Admin from "./pages/admin/Admin";
 
 const App = () => {
   return (
@@ -23,14 +23,14 @@ const App = () => {
             <Route
               path="*"
               element={
-                <LayoutComponent>
+                <UserLayoutComponent>
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/book" element={<Book />} />
                     <Route path="/signin" element={<SignIn />} />
                     <Route path="/signup" element={<SignUp />} />
                   </Routes>
-                </LayoutComponent>
+                </UserLayoutComponent>
               }
             />
 
@@ -44,7 +44,7 @@ const App = () => {
                       path=""
                       element={
                         <AdminRoute adminOnly={true}>
-                          <AdminAppointments />
+                          <Admin />
                         </AdminRoute>
                       }
                     />

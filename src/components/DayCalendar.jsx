@@ -107,7 +107,7 @@ const DayCalendar = ({
       >
         <span>
           {time} -{" "}
-          {isTaken ? (isAdmin ? appointment.username : "Taken") : "Available"}
+          {isTaken ? (isAdmin ? appointment?.username : "Taken") : "Available"}
         </span>
         {isAdmin && isTaken && (
           <Popconfirm
@@ -138,7 +138,7 @@ const DayCalendar = ({
         <Popover
           placement="bottom"
           content={content(appointment)}
-          title={"Appointment Details"}
+          title={`Appointment}`}
         >
           {appointmentDisplay}
         </Popover>

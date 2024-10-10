@@ -50,7 +50,7 @@ const AppointmentEditForm = ({ appointment }) => {
     // Prepare the data for submission
     const dataToSubmit = {
       appointmentId: initialValues.appointmentId,
-      username: formValues.Input,
+      username: appointment?.username,
       desc: formValues.TextArea,
       length: formValues.length,
       date: formValues.DatePicker
@@ -101,28 +101,11 @@ const AppointmentEditForm = ({ appointment }) => {
       onValuesChange={onValuesChange}
       onFinish={onFinish}
       style={{
-        maxWidth: 600,
+        maxWidth: 250,
       }}
     >
-      {/* <Form.Item label="ID" name="appointmentId">
-        <Input disabled />
-      </Form.Item> */}
-
       <Form.Item
-        label="Input"
-        name="Input"
-        rules={[
-          {
-            required: true,
-            message: "Please input!",
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-
-      <Form.Item
-        label="Duration in hours"
+        label="Length"
         name="length"
         rules={[
           {
@@ -135,7 +118,7 @@ const AppointmentEditForm = ({ appointment }) => {
       </Form.Item>
 
       <Form.Item
-        label="TextArea"
+        label="Desc"
         name="TextArea"
         rules={[
           {
@@ -148,7 +131,7 @@ const AppointmentEditForm = ({ appointment }) => {
       </Form.Item>
 
       <Form.Item
-        label="DatePicker"
+        label="Date"
         name="DatePicker"
         rules={[
           {
@@ -161,7 +144,7 @@ const AppointmentEditForm = ({ appointment }) => {
       </Form.Item>
 
       <Form.Item
-        label="TimePicker"
+        label="Time"
         name="TimePicker"
         rules={[
           {

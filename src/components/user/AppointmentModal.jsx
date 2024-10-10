@@ -1,6 +1,9 @@
-import React from "react";
+// src/components/user/AppointmentModal.jsx
+import React, { useState } from "react";
 import { Button, Drawer, Space } from "antd";
 import DayCalendar from "../DayCalendar";
+import PopUpModal from "../PopUpModal";
+
 const AppointmentModal = ({
   setModalOpen,
   modalOpen,
@@ -9,18 +12,21 @@ const AppointmentModal = ({
   selectedDate,
   appointments,
 }) => {
-  const showDrawer = () => {
-    setModalOpen(true);
-  };
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const onClose = () => {
+    setModalOpen(false);
+  };
+
+  const onSubmit = () => {
+    setShowConfirmModal(true); // Open the PopUpModal
     setModalOpen(false);
   };
 
   return (
     <>
       <Drawer
-        title={selectedTime ? selectedTime : "Select spot"} // Update title to include selectedDate
+        title={selectedTime ? `${selectedDate} ${selectedTime}` : "Select spot"}
         placement="right"
         width={500}
         onClose={onClose}
@@ -28,7 +34,7 @@ const AppointmentModal = ({
         extra={
           <Space>
             <Button onClick={onClose}>Cancel</Button>
-            <Button type="primary" onClick={onClose}>
+            <Button type="primary" onClick={onSubmit}>
               OK
             </Button>
           </Space>
@@ -41,7 +47,14 @@ const AppointmentModal = ({
           appointments={appointments}
         />
       </Drawer>
+      <PopUpModal
+        visible={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        selectedTime={selectedTime}
+        selectedDate={selectedDate}
+      />
     </>
   );
 };
+
 export default AppointmentModal;

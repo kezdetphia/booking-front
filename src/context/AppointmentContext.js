@@ -1,16 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext";
 
-// Create the context
 const AppointmentContext = createContext();
 
-// Custom hook to use the AppointmentContext
 export const useAppointmentContext = () => useContext(AppointmentContext);
 
-// Provider component
 export const AppointmentProvider = ({ children }) => {
   const { setUser, user } = useAuth();
-  console.log("AppointmentProvider", user);
+  // console.log("AppointmentProvider", user);
   const [appointments, setAppointments] = useState([]);
   // const [updateAppointmentFetch, setUpdateAppointmentFetch] = useState(false)
 
@@ -32,8 +29,8 @@ export const AppointmentProvider = ({ children }) => {
         {
           method: "GET",
           headers: {
-            "Content-Type": "application/json", // Set the content type to JSON
-            Authorization: `Bearer ${authToken}`, // Add the authToken to the headers
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
           },
         }
       );

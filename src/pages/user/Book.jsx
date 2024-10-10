@@ -90,6 +90,7 @@ const Book = () => {
             selectedTime={selectedTime}
             selectedDate={selectedDate}
             appointments={appointments}
+            submitAppointment={submitAppointment}
           />
           <Calendar
             fullscreen={false}

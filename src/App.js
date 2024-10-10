@@ -11,7 +11,7 @@ import { AuthContextProvider } from "./context/authContext";
 import { AppointmentProvider } from "./context/AppointmentContext";
 import AdminRoute from "./components/admin/AdminRoute";
 
-import AdminAppointments from "./pages/admin/AdminAppointments";
+import Admin from "./pages/admin/Admin";
 
 const App = () => {
   return (
@@ -44,7 +44,7 @@ const App = () => {
                       path=""
                       element={
                         <AdminRoute adminOnly={true}>
-                          <AdminAppointments />
+                          <Admin />
                         </AdminRoute>
                       }
                     />

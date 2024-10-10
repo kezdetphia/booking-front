@@ -36,10 +36,6 @@ const UserLayoutComponent = ({ children }) => {
     ...(!authToken
       ? [
           {
-            key: "Sign Up",
-            label: <Link to="/signup">SignUp</Link>,
-          },
-          {
             key: "Sign In",
             label: <Link to="/signin">SignIn</Link>,
           },

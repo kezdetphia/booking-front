@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Layout, Menu, Button, Drawer, theme } from "antd";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
-import AdminMain from "../../pages/admin/AdminMain";
+import Admin from "../../pages/admin/Admin";
+import { useAppointmentContext } from "../../context/AppointmentContext";
 const { Header, Content } = Layout;
 
 const items = Array.from({ length: 15 }, (_, index) => {
@@ -25,6 +26,7 @@ const items = Array.from({ length: 15 }, (_, index) => {
 });
 
 const AdminLayoutComponent = () => {
+  const { appointments } = useAppointmentContext();
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
@@ -99,7 +101,7 @@ const AdminLayoutComponent = () => {
       </Header>
       <Content
         style={{
-          padding: "0 48px",
+          padding: "0 0px",
         }}
       >
         <div
@@ -111,7 +113,7 @@ const AdminLayoutComponent = () => {
           }}
         >
           {/* <AdminAppointments appointmentDate={appointmentDate} /> */}
-          <AdminMain appointmentDate={appointmentDate} />
+          <Admin appointmentDate={appointmentDate} />
         </div>
       </Content>
       <Drawer width={300} title="Admin Menu" onClose={onClose} open={open}>

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Button, Drawer, Radio, Space } from "antd";
-import DayCalendar from "./DayCalendar";
+import React from "react";
+import { Button, Drawer, Space } from "antd";
+import DayCalendar from "../DayCalendar";
 const AppointmentModal = ({
   setModalOpen,
   modalOpen,

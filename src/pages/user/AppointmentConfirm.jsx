@@ -1,5 +1,5 @@
 import React from "react";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../../context/authContext";
 
 function AppointmentConfirm() {
   const { user } = useAuth();

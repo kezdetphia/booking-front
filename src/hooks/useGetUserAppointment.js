@@ -1,13 +1,13 @@
-// src/hooks/useUserAppointments.js
+// src/hooks/useGetUserAppointment.js
 import { useState, useEffect } from "react";
 
-const useUserAppointments = (userId) => {
+const useGetUserAppointment = (userId) => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchAppointments = async () => {
+    const getAppointmentsDb = async () => {
       try {
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/api/users/getuserappointments/${userId}`
@@ -26,11 +26,11 @@ const useUserAppointments = (userId) => {
     };
 
     if (userId) {
-      fetchAppointments();
+      getAppointmentsDb();
     }
   }, [userId]);
 
   return { appointments, loading, error };
 };
 
-export default useUserAppointments;
+export default useGetUserAppointment;

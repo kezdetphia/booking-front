@@ -15,9 +15,9 @@ import {
 } from "antd";
 import huHU from "antd/es/locale/hu_HU"; // Import Hungarian locale for Ant Design
 import dayLocaleData from "dayjs/plugin/localeData";
-import AppointmentModal from "../components/AppointmentModal";
-import { useAuth } from "../context/authContext";
-import { useAppointments } from "../context/AppointmentContext";
+import AppointmentModal from "../../components/user/AppointmentModal";
+import { useAuth } from "../../context/authContext";
+import { useAppointmentContext } from "../../context/AppointmentContext";
 
 dayjs.extend(dayLocaleData);
 dayjs.extend(isSameOrAfter); // Extend dayjs with the plugin
@@ -25,7 +25,7 @@ dayjs.extend(isSameOrAfter); // Extend dayjs with the plugin
 const Book = () => {
   const { user } = useAuth();
   console.log("book user", user);
-  const { appointments, addAppointment } = useAppointments();
+  const { appointments, postAppointmentDb } = useAppointmentContext();
   const [modalOpen, setModalOpen] = useState(false);
   const { token } = theme.useToken();
   const [selectedDate, setSelectedDate] = useState("");
@@ -54,7 +54,7 @@ const Book = () => {
 
   const submitAppointment = async () => {
     //context function
-    await addAppointment({
+    await postAppointmentDb({
       userId: user?._id,
       username: user?.username,
       email: user?.email,

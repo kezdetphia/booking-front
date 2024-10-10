@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/authContext"; // Assuming you have a hook to access auth context
+import { useAuth } from "../../context/authContext"; // Assuming you have a hook to access auth context
 
 const PrivateRoute = ({ children, adminOnly }) => {
   const { user } = useAuth(); // Get the current user from context

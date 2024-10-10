@@ -13,14 +13,22 @@ export const AuthContextProvider = ({ children }) => {
         const token = localStorage.getItem("authToken");
 
         if (token) {
-          const userDetails = localStorage.getItem("user");
-          if (userDetails) {
-            setUser(JSON.parse(userDetails));
-            setIsAuthenticated(true);
-          } else {
-            setUser(null);
-            setIsAuthenticated(false);
+          const res = await fetch("http://localhost:3001/api/users/getmyuser", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          });
+
+          if (!res.ok) {
+            throw new Error("Authcontext user fetch went wrong a bit");
           }
+
+          const data = await res.json();
+          setUser(data.user);
+
+          setIsAuthenticated(true);
         } else {
           setUser(null);
           setIsAuthenticated(false);
@@ -37,19 +45,12 @@ export const AuthContextProvider = ({ children }) => {
     setUserAuthenticated();
   }, []);
 
-  const setUserInfo = async (userDetails) => {
-    localStorage.setItem("user", JSON.stringify(userDetails));
-    setUser(userDetails);
-    setIsAuthenticated(true);
-  };
-
   return (
     <AuthContext.Provider
       value={{
         isAuthenticated,
         user,
         authLoading,
-        setUserInfo,
         setIsAuthenticated,
         setUser,
       }}

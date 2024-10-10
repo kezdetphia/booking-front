@@ -2,7 +2,7 @@ import React from "react";
 import { SmileOutlined, CloseOutlined } from "@ant-design/icons";
 import { Timeline, Popover, message, Popconfirm, Button } from "antd";
 import AppointmentEditForm from "./AppointmentEditForm";
-import useAdminDeleteAppointment from "../hooks/adminDeleteAppointment";
+import useAdminDeleteAppointment from "../hooks/useAdminDeleteAppointment";
 
 const DayCalendar = ({
   selectedDate,

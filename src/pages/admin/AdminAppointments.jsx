@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/authContext";
-import DayCalendar from "../components/DayCalendar";
-import { useAppointments } from "../context/AppointmentContext";
+import { useAuth } from "../../context/authContext";
+import DayCalendar from "../../components/DayCalendar";
+import { useAppointmentContext } from "../../context/AppointmentContext";
 
 function AdminAppointments({ appointmentDate }) {
-  const { appointments } = useAppointments();
+  const { appointments } = useAppointmentContext();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
 

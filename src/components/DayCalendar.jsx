@@ -3,6 +3,8 @@ import { SmileOutlined, CloseOutlined } from "@ant-design/icons";
 import { Timeline, Popover, message, Popconfirm, Button } from "antd";
 import AppointmentEditForm from "./AppointmentEditForm";
 import { useAppointmentContext } from "../context/AppointmentContext";
+import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const DayCalendar = ({
   selectedDate,
@@ -11,6 +13,8 @@ const DayCalendar = ({
   isAdmin,
 }) => {
   const { deleteAppointment, appointments } = useAppointmentContext();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const hours = [
     "07:00",
     "08:00",
@@ -71,7 +75,14 @@ const DayCalendar = ({
       if (isAdmin) {
         // Admin logic if needed
       } else if (!isTaken && isInteractive) {
-        setSelectedTime(time);
+        if (user) {
+          setSelectedTime(time);
+        } else {
+          message.error("Please login to book an appointment");
+          setTimeout(() => {
+            navigate("/signin");
+          }, 3000);
+        }
       }
     };
 
@@ -96,9 +107,14 @@ const DayCalendar = ({
       >
         <span>
           {time} -{" "}
-          {isTaken ? (isAdmin ? appointment?.username : "Taken") : "Available"}
+          {/* {isTaken ? (isAdmin ? appointment?.username : "Taken") : "Available"} */}
+          {isTaken
+            ? user?.isAdmin || appointment?.userId === user?._id
+              ? appointment?.username
+              : "Taken"
+            : "Available"}
         </span>
-        {isAdmin && isTaken && appointment && (
+        {user?.isAdmin && isTaken && appointment && (
           <Popconfirm
             title="Delete the task"
             description="Are you sure to delete this task?"
@@ -115,7 +131,7 @@ const DayCalendar = ({
 
     return {
       color: isTaken ? "red" : "green",
-      children: (
+      children: user ? (
         <Popover
           placement="bottom"
           content={content(appointment)}
@@ -123,6 +139,8 @@ const DayCalendar = ({
         >
           {appointmentDisplay}
         </Popover>
+      ) : (
+        appointmentDisplay
       ),
     };
   });

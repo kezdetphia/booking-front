@@ -3,12 +3,11 @@ import React, { useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { Button, Divider, Drawer, Avatar, List } from "antd";
 import { Link } from "react-router-dom";
-import useGetUserAppointment from "../../hooks/useGetUserAppointment";
+import { useAppointmentContext } from "../../context/AppointmentContext";
 
 function UserDrawer({ drawerOpen, onClose, handleLogout }) {
   const { user } = useAuth();
-  const userId = user?._id;
-  const { appointments } = useGetUserAppointment(userId);
+  const { appointments } = useAppointmentContext();
   const [childrenDrawer, setChildrenDrawer] = useState(false);
   const [selectedContent, setSelectedContent] = useState("");
 
@@ -38,11 +37,8 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
     return { past, today: todayAppointments, future };
   };
 
-  const {
-    past,
-    today: todayAppointments,
-    future,
-  } = categorizeAppointments(appointments);
+  const { today: todayAppointments, future } =
+    categorizeAppointments(appointments);
 
   const personalData = [user?.username, user?.email];
 

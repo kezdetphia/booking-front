@@ -7,7 +7,7 @@ const PopUpModal = ({ visible, onClose, selectedTime, selectedDate }) => {
   return (
     <Modal
       title="Your appointment:"
-      visible={visible}
+      open={visible}
       onOk={onClose}
       onCancel={onClose}
       okText="Book"

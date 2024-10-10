@@ -10,6 +10,7 @@ const SignIn = () => {
   const authToken = localStorage.getItem("authToken");
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
+  console.log("authToken", authToken);
 
   useEffect(() => {
     if (authToken) {

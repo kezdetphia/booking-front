@@ -26,7 +26,7 @@ const items = Array.from({ length: 15 }, (_, index) => {
 });
 
 const AdminLayoutComponent = () => {
-  const { appointments } = useAppointmentContext();
+  // const { appointments } = useAppointmentContext();
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
@@ -113,7 +113,10 @@ const AdminLayoutComponent = () => {
           }}
         >
           {/* <AdminAppointments appointmentDate={appointmentDate} /> */}
-          <Admin appointmentDate={appointmentDate} />
+          <Admin
+            appointmentDate={appointmentDate}
+            componentToRender={componentToRender}
+          />
         </div>
       </Content>
       <Drawer width={300} title="Admin Menu" onClose={onClose} open={open}>

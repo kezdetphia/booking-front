@@ -2,13 +2,17 @@ import React from "react";
 import AdminAppointments from "./AdminAppointments";
 import { useAuth } from "../../context/authContext";
 import { useAppointmentContext } from "../../context/AppointmentContext";
+import AdminUsers from "./AdminUsers";
 
-function Admin({ appointmentDate }) {
-  const { user } = useAuth();
-  const { appointments } = useAppointmentContext();
+function Admin({ appointmentDate, componentToRender }) {
+  // const { user } = useAuth();
+  // const { appointments } = useAppointmentContext();
   return (
     <>
-      <AdminAppointments appointmentDate={appointmentDate} />
+      {componentToRender === "Appointments" && (
+        <AdminAppointments appointmentDate={appointmentDate} />
+      )}
+      {componentToRender === "Users" && <AdminUsers />}
     </>
   );
 }

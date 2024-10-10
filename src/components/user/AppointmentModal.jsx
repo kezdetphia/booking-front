@@ -11,6 +11,7 @@ const AppointmentModal = ({
   selectedTime,
   selectedDate,
   appointments,
+  submitAppointment,
 }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -21,6 +22,7 @@ const AppointmentModal = ({
   const onSubmit = () => {
     setShowConfirmModal(true); // Open the PopUpModal
     setModalOpen(false);
+    submitAppointment();
   };
 
   return (
@@ -48,7 +50,7 @@ const AppointmentModal = ({
         />
       </Drawer>
       <PopUpModal
-        visible={showConfirmModal}
+        open={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
         selectedTime={selectedTime}
         selectedDate={selectedDate}

@@ -25,7 +25,7 @@ dayjs.extend(isSameOrAfter); // Extend dayjs with the plugin
 const Book = () => {
   const { user } = useAuth();
   console.log("book user", user);
-  const { appointments, postAppointmentDb } = useAppointmentContext();
+  const { postAppointment, appointments } = useAppointmentContext();
   const [modalOpen, setModalOpen] = useState(false);
   const { token } = theme.useToken();
   const [selectedDate, setSelectedDate] = useState("");
@@ -54,7 +54,7 @@ const Book = () => {
 
   const submitAppointment = async () => {
     //context function
-    await postAppointmentDb({
+    await postAppointment({
       userId: user?._id,
       username: user?.username,
       email: user?.email,
@@ -177,7 +177,6 @@ const Book = () => {
           />
         </div>
       </div>
-      <Button onClick={submitAppointment}>Book</Button>
     </ConfigProvider>
   );
 };

@@ -26,7 +26,8 @@ const items = Array.from({ length: 15 }, (_, index) => {
 });
 
 const AdminLayoutComponent = () => {
-  // const { appointments } = useAppointmentContext();
+  const { appointments } = useAppointmentContext();
+  console.log("appointments in admin layout", appointments);
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");

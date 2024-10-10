@@ -7,21 +7,23 @@ export const useAppointmentContext = () => useContext(AppointmentContext);
 
 export const AppointmentProvider = ({ children }) => {
   const { setUser, user } = useAuth();
-  // console.log("AppointmentProvider", user);
   const [appointments, setAppointments] = useState([]);
-  // const [updateAppointmentFetch, setUpdateAppointmentFetch] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  //fetching appointments
+  // Fetching appointments when the component mounts
   useEffect(() => {
-    getAppointmentsDb();
+    getAppointments();
   }, []);
 
   //Fetch all appointments from db
-  const getAppointmentsDb = async () => {
+  const getAppointments = async () => {
+    setLoading(true);
     try {
       const authToken = localStorage.getItem("authToken");
       if (!authToken) {
-        return "User not authenicated";
+        console.log("User not authenicated");
+        return;
       }
 
       const res = await fetch(
@@ -41,16 +43,22 @@ export const AppointmentProvider = ({ children }) => {
       setAppointments(data.appointments);
     } catch (err) {
       console.log("error while fetching apps", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  //POST fech an appointment to db
-  const postAppointmentDb = async (newAppointment) => {
+  // Create an appointment
+  const postAppointment = async (newAppointment) => {
+    console.log("Starting postAppointment with:", newAppointment);
+    setLoading(true);
+    setError(null);
     const tempId = Date.now();
     const tempAppointment = { ...newAppointment, id: tempId };
 
     // Optimistically update the state
     setAppointments((prev) => [...prev, tempAppointment]);
+    console.log("Optimistically added temporary appointment:", tempAppointment);
 
     try {
       const authToken = localStorage.getItem("authToken");
@@ -61,6 +69,7 @@ export const AppointmentProvider = ({ children }) => {
         return;
       }
 
+      console.log("Sending POST request to create appointment...");
       const res = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/appointments/create`,
         {
@@ -73,20 +82,28 @@ export const AppointmentProvider = ({ children }) => {
         }
       );
 
-      if (!res.ok) throw new Error("Server error in postAppointmentDb context");
+      if (!res.ok) {
+        console.error("Server responded with an error:", res.status);
+        throw new Error("Server error in postAppointmentDb context");
+      }
 
       const data = await res.json();
+      console.log("Received response from server:", data);
 
       // Replace the temporary appointment with the one from the server
       setAppointments((prev) =>
         prev.map((app) => (app.id === tempId ? data.appointment : app))
+      );
+      console.log(
+        "Replaced temporary appointment with server data:",
+        data.appointment
       );
 
       // Debugging: Log the current user and the new appointment
       console.log("Current user before update:", user);
       console.log("New appointment ID:", data.appointment._id);
 
-      // Update the user's appointments array on
+      // Update the user's appointments array
       setUser((prevUser) => {
         const updatedUser = {
           ...prevUser,
@@ -100,16 +117,70 @@ export const AppointmentProvider = ({ children }) => {
       });
 
       // Fetch appointments again to ensure the list is up-to-date
-      await getAppointmentsDb();
+      // await getAppointmentsDb();
     } catch (err) {
-      console.log("Error while adding appointment in context:", err);
+      console.error("Error while adding appointment in context:", err);
       setAppointments((prev) => prev.filter((app) => app.id !== tempId));
+    } finally {
+      setLoading(false);
+      console.log("Finished postAppointment process");
+    }
+  };
+
+  const deleteAppointment = async (appointmentId) => {
+    console.log("deleteAppointment in context", appointmentId);
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      console.log("User not authenticated");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/appointments/deleteappointment/${appointmentId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error("Server error in deleteAppointment context");
+
+      // Optimistically update the state
+      setAppointments((prev) =>
+        prev.filter((app) => app._id !== appointmentId)
+      );
+      console.log("Appointment deleted from state:", appointmentId);
+
+      const data = await res.json();
+      console.log("Appointment deleted from db:", data);
+
+      // Update the user's appointments array on the server
+      const updatedUser = {
+        ...user,
+        appointments: user.appointments.filter((id) => id !== appointmentId),
+      };
+      setUser(updatedUser);
+    } catch (err) {
+      console.log("Error while deleting appointment in context:", err);
     }
   };
 
   return (
     <AppointmentContext.Provider
-      value={{ appointments, setAppointments, postAppointmentDb }}
+      value={{
+        appointments,
+        postAppointment,
+        deleteAppointment,
+        loading,
+        error,
+      }}
     >
       {children}
     </AppointmentContext.Provider>

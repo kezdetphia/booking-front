@@ -30,7 +30,6 @@ function AdminAppointments({ appointmentDate }) {
           selectedDate={appointmentDate}
           isInteractive={true}
           isAdmin={user?.isAdmin}
-          appointments={appointments}
         />
       ) : (
         <div>No appointments for this date.</div>

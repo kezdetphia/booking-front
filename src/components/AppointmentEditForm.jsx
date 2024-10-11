@@ -163,7 +163,7 @@ const AppointmentEditForm = ({ appointment }) => {
         }}
       >
         <Button type="primary" htmlType="submit">
-          Submit
+          <p className="font-serif">Submit</p>
         </Button>
       </Form.Item>
     </Form>

@@ -64,11 +64,13 @@ const AdminLayoutComponent = () => {
     const links = ["Appointments", "All Appointments", "Users"];
     return (
       <>
-        <Link to="/home">Home</Link>
+        <Link to="/">
+          <p className="cursor-pointer font-serif font-semibold ">Home</p>
+        </Link>
         {links.map((link, index) => (
           <div key={index}>
             <Link to="#" onClick={() => setComponentToRender(link)}>
-              {link}
+              <p className="cursor-pointer font-serif font-semibold ">{link}</p>
             </Link>
           </div>
         ))}
@@ -120,7 +122,12 @@ const AdminLayoutComponent = () => {
           />
         </div>
       </Content>
-      <Drawer width={300} title="Admin Menu" onClose={onClose} open={open}>
+      <Drawer
+        width={300}
+        title={<p className="text-xl font-semibold font-serif">Admin Menu</p>}
+        onClose={onClose}
+        open={open}
+      >
         {sections()}
       </Drawer>
     </Layout>

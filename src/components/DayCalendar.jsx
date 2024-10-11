@@ -105,25 +105,32 @@ const DayCalendar = ({
           alignItems: "center",
         }}
       >
-        <span>
+        <p className="font-serif">
           {time} -{" "}
-          {/* {isTaken ? (isAdmin ? appointment?.username : "Taken") : "Available"} */}
           {isTaken
             ? user?.isAdmin || appointment?.userId === user?._id
               ? appointment?.username
               : "Taken"
             : "Available"}
-        </span>
+        </p>
         {user?.isAdmin && isTaken && appointment && (
+          //delete popup
           <Popconfirm
-            title="Delete the task"
-            description="Are you sure to delete this task?"
+            title={<p className="font-serif">Delete the task</p>}
+            description={
+              <p className="font-serif">Are you sure to delete this task?</p>
+            }
             onConfirm={(e) => handleDelete(e, appointment._id)}
             onCancel={cancel}
-            okText="Yes"
-            cancelText="No"
+            okText={<p className="font-serif">Yes</p>}
+            cancelText={<p className="font-serif">No</p>}
           >
-            <Button danger>Delete</Button>
+            <div className="pr-2">
+              <Button danger>
+                {" "}
+                <p className="font-serif">Delete</p>
+              </Button>
+            </div>
           </Popconfirm>
         )}
       </div>

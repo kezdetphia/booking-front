@@ -2,17 +2,19 @@ import React from "react";
 import { SmileOutlined, CloseOutlined } from "@ant-design/icons";
 import { Timeline, Popover, message, Popconfirm, Button } from "antd";
 import AppointmentEditForm from "./AppointmentEditForm";
-import useAdminDeleteAppointment from "../hooks/useAdminDeleteAppointment";
+import { useAppointmentContext } from "../context/AppointmentContext";
+import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const DayCalendar = ({
   selectedDate,
   setSelectedTime,
   isInteractive,
   isAdmin,
-  appointments,
 }) => {
-  const { deleteAppointment } = useAdminDeleteAppointment();
-
+  const { deleteAppointment, appointments } = useAppointmentContext();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const hours = [
     "07:00",
     "08:00",
@@ -43,32 +45,22 @@ const DayCalendar = ({
     for (let i = 0; i < length; i++) {
       const hourToMark = startHour + i;
       if (hourToMark < 24) {
-        // Ensure we don't go beyond 24 hours
         takenHours.add(hourToMark);
       }
     }
   });
 
-  const confirm = async (e, appId) => {
-    console.log(e);
-    await handleDelete(appId);
-    message.success("Click on Yes");
+  const handleDelete = async (e, appId) => {
+    e.stopPropagation(); // Prevent triggering the parent click event
+    console.log("Deleting appointment with ID:", appId);
+    // Call your delete function here
+    await deleteAppointment(appId);
+    message.success("Appointment deleted successfully");
   };
 
   const cancel = (e) => {
     console.log(e);
     message.error("Click on No");
-  };
-
-  const handleDelete = async (appId) => {
-    try {
-      await deleteAppointment(appId);
-      message.success("Appointment deleted successfully");
-      console.log("Deleting appointment with ID:", appId);
-    } catch (error) {
-      message.error("Failed to delete appointment");
-      console.error("Error deleting appointment:", error);
-    }
   };
 
   const timelineItems = hours.map((time) => {
@@ -81,8 +73,16 @@ const DayCalendar = ({
 
     const handleOnClick = () => {
       if (isAdmin) {
+        // Admin logic if needed
       } else if (!isTaken && isInteractive) {
-        setSelectedTime(time);
+        if (user) {
+          setSelectedTime(time);
+        } else {
+          message.error("Please login to book an appointment");
+          setTimeout(() => {
+            navigate("/signin");
+          }, 3000);
+        }
       }
     };
 
@@ -105,43 +105,49 @@ const DayCalendar = ({
           alignItems: "center",
         }}
       >
-        <span>
+        <p className="font-serif">
           {time} -{" "}
-          {isTaken ? (isAdmin ? appointment?.username : "Taken") : "Available"}
-        </span>
-        {isAdmin && isTaken && (
+          {isTaken
+            ? user?.isAdmin || appointment?.userId === user?._id
+              ? appointment?.username
+              : "Taken"
+            : "Available"}
+        </p>
+        {user?.isAdmin && isTaken && appointment && (
+          //delete popup
           <Popconfirm
-            title="Delete the task"
-            description="Are you sure to delete this task?"
-            onConfirm={() => handleDelete(appointment._id)}
+            title={<p className="font-serif">Delete the task</p>}
+            description={
+              <p className="font-serif">Are you sure to delete this task?</p>
+            }
+            onConfirm={(e) => handleDelete(e, appointment._id)}
             onCancel={cancel}
-            okText="Yes"
-            cancelText="No"
+            okText={<p className="font-serif">Yes</p>}
+            cancelText={<p className="font-serif">No</p>}
           >
-            <Button danger>Delete</Button>
+            <div className="pr-2">
+              <Button danger>
+                {" "}
+                <p className="font-serif">Delete</p>
+              </Button>
+            </div>
           </Popconfirm>
-
-          // <CloseOutlined
-          //   style={{ color: "red", cursor: "pointer" }}
-          //   onClick={(e) => {
-          //     e.stopPropagation(); // Prevent triggering the parent click event
-          //     handleDelete(appointment?._id);
-          //   }}
-          // />
         )}
       </div>
     );
 
     return {
       color: isTaken ? "red" : "green",
-      children: (
+      children: user ? (
         <Popover
           placement="bottom"
           content={content(appointment)}
-          title={`Appointment}`}
+          title="Appointment"
         >
           {appointmentDisplay}
         </Popover>
+      ) : (
+        appointmentDisplay
       ),
     };
   });

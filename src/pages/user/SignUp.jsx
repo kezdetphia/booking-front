@@ -92,7 +92,9 @@ const SignUp = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="flex justify-center">Sign Up</h1>
+      <h1 className="flex justify-center font-serif font-semibold text-xl">
+        Sign Up
+      </h1>
       <div className="max-w-md mx-auto bg-white shadow-md rounded-md p-6">
         {contextHolder}
         <Form
@@ -208,7 +210,14 @@ const SignUp = () => {
             >
               {isSubmitting ? "Registering..." : "Register"}
             </Button>
-            or <a href="/signin">Log in!</a>
+            <div className="flex justify-center pt-4">
+              <p className="font-serif">Already have an account?&nbsp;</p>
+              <a href="/signin">
+                <p className="text-blue-500 font-semibold font-serif">
+                  Log in!
+                </p>
+              </a>
+            </div>
           </Form.Item>
         </Form>
       </div>

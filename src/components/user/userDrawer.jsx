@@ -3,12 +3,11 @@ import React, { useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { Button, Divider, Drawer, Avatar, List } from "antd";
 import { Link } from "react-router-dom";
-import useGetUserAppointment from "../../hooks/useGetUserAppointment";
+import { useAppointmentContext } from "../../context/AppointmentContext";
 
 function UserDrawer({ drawerOpen, onClose, handleLogout }) {
   const { user } = useAuth();
-  const userId = user?._id;
-  const { appointments } = useGetUserAppointment(userId);
+  const { appointments } = useAppointmentContext();
   const [childrenDrawer, setChildrenDrawer] = useState(false);
   const [selectedContent, setSelectedContent] = useState("");
 
@@ -38,11 +37,8 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
     return { past, today: todayAppointments, future };
   };
 
-  const {
-    past,
-    today: todayAppointments,
-    future,
-  } = categorizeAppointments(appointments);
+  const { today: todayAppointments, future } =
+    categorizeAppointments(appointments);
 
   const personalData = [user?.username, user?.email];
 
@@ -57,31 +53,39 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
 
   return (
     <Drawer
-      title="Menu"
+      title={<p className="font-semibold font-serif text-xl">Menu</p>}
       width={200}
       closable={false}
       onClose={onClose}
       open={drawerOpen}
     >
-      <h1
-        className="cursor-pointer"
-        onClick={() => showChildrenDrawer("Profile")}
-      >
-        My Profile
-      </h1>
-      <h1
-        className="cursor-pointer"
-        onClick={() => showChildrenDrawer("Appointments")}
-      >
-        My Appointments
-      </h1>
+      <div className="flex flex-col h-full justify-between">
+        <div className="flex flex-col gap-1">
+          <h1
+            className="cursor-pointer font-semibold font-serif"
+            onClick={() => showChildrenDrawer("Profile")}
+          >
+            My Profile
+          </h1>
+          <h1
+            className="cursor-pointer font-semibold font-serif"
+            onClick={() => showChildrenDrawer("Appointments")}
+          >
+            My Appointments
+          </h1>
+        </div>
 
-      <Button type="primary" onClick={handleLogout}>
-        Logout
-      </Button>
+        <div className="flex justify-center ">
+          <Button type="primary" onClick={handleLogout} size="medium">
+            <p className="font-serif">Logout</p>
+          </Button>
+        </div>
+      </div>
 
       <Drawer
-        title={selectedContent}
+        title={
+          <p className="font-semibold font-serif text-xl">{selectedContent}</p>
+        }
         width={320}
         closable={false}
         onClose={onChildrenDrawerClose}
@@ -89,76 +93,105 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
       >
         {selectedContent === "Appointments" ? (
           <div>
-            <Divider orientation="left" orientationMargin="0">
-              Today's Appointment
-            </Divider>
-            {todayAppointments.map((appointment, index) => (
-              <div className="flex flex-col" key={`today-${index}`}>
-                <div>
-                  {appointment?.date} {appointment?.time}
-                </div>
-                <div>{appointment?.desc}</div>
-                <Divider />
-              </div>
-            ))}
-            <Divider orientation="left" orientationMargin="0">
-              Future Appointments
-            </Divider>
-            {future.length > 0 ? (
-              future.map((appointment, index) => (
-                <div className="flex flex-col" key={`future-${index}`}>
-                  <div>
-                    {appointment?.date} {appointment?.time}
+            {todayAppointments.length > 0 && (
+              <>
+                <Divider orientation="left" orientationMargin="0">
+                  <p className="font-semibold font-serif ">
+                    Today's Appointments
+                  </p>
+                </Divider>
+                {todayAppointments.map((appointment, index) => (
+                  <div className="flex flex-col" key={`today-${index}`}>
+                    <div>
+                      <p className="font-serif">
+                        {appointment?.date} {appointment?.time}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="font-serif">{appointment?.desc}</p>
+                    </div>
+                    <Divider />
                   </div>
-                  <div>{appointment?.desc}</div>
-                  <Divider />
-                </div>
-              ))
+                ))}
+              </>
+            )}
+            {future.length > 0 ? (
+              <>
+                <Divider orientation="left" orientationMargin="0">
+                  <p className="font-semibold font-serif ">
+                    Future Appointments
+                  </p>
+                </Divider>
+                {future.map((appointment, index) => (
+                  <div className="flex flex-col" key={`future-${index}`}>
+                    <div>
+                      <p className="font-serif">
+                        {appointment?.date} {appointment?.time}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="font-serif">{appointment?.desc}</p>
+                    </div>
+                    <Divider />
+                  </div>
+                ))}
+              </>
             ) : (
               <div>
-                <p>
-                  No future appointments.{" "}
-                  <Link to="/book" onClick={onChildrenDrawerClose}>
-                    <Button type="primary">Book an appointment now</Button>
-                  </Link>
+                <p className="text-center text-xl font-semibold font-serif">
+                  No future appointments.
                 </p>
+                <div className="flex justify-center pt-5">
+                  <Link to="/book" onClick={onChildrenDrawerClose}>
+                    <Button size="large" type="primary">
+                      <p className="font-serif">
+                        Book your next appointment now!
+                      </p>
+                    </Button>
+                  </Link>
+                </div>
               </div>
             )}
           </div>
         ) : selectedContent === "Profile" ? (
           <>
-            <div className="flex justify-center">
+            <Divider orientation="center">
               <Avatar
                 style={{
                   backgroundColor: "#ffcccb",
                 }}
               >
-                {user?.username?.charAt(0).toUpperCase()}
+                <p className="font-serif">
+                  {user?.username?.charAt(0).toUpperCase()}
+                </p>
               </Avatar>
-            </div>
-            <Divider orientation="center">{user?.username}</Divider>
+            </Divider>
             <List
               header={
                 <div>
-                  <h1 className="font-bold">Personal Details</h1>
+                  <p className="font-semibold font-serif">Personal Details</p>
                 </div>
               }
               footer={
                 <div className="flex justify-center">
                   <Link to="/book">
                     <Button onClick={onChildrenDrawerClose} type="primary">
-                      Book an appointment
+                      <p className="font-serif">Book an appointment</p>
                     </Button>
                   </Link>
                 </div>
               }
               bordered
               dataSource={personalData}
-              renderItem={(item) => <List.Item>{item}</List.Item>}
+              renderItem={(item, index) => (
+                <List.Item key={index}>
+                  <p className="font-serif">{item}</p>
+                </List.Item>
+              )}
             />
           </>
         ) : (
-          <h1>DEFAULT CONTENT</h1>
+          <h1 className="font-serif">DEFAULT CONTENT</h1>
         )}
       </Drawer>
     </Drawer>

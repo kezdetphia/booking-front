@@ -6,8 +6,9 @@ function AppointmentConfirm() {
 
   return (
     <div>
-      <h1>Thanks for booking an appointment {user?.username}</h1>
-      {/* <p>Your appointment is on: } </p> */}
+      <h1 className="font-serif">
+        Thanks for booking an appointment {user?.username}
+      </h1>
     </div>
   );
 }

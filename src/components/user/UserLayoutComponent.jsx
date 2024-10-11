@@ -23,21 +23,41 @@ const UserLayoutComponent = ({ children }) => {
   const links = [
     {
       key: "Home",
-      label: <Link to="/">Home</Link>,
+      label: (
+        <Link to="/">
+          {" "}
+          <p className="font-serif">Home</p>
+        </Link>
+      ),
     },
     {
       key: "Book",
-      label: <Link to="/book">Book</Link>,
+      label: (
+        <Link to="/book">
+          {" "}
+          <p className="font-serif">Book</p>
+        </Link>
+      ),
     },
-    {
-      key: "Contact",
-      label: <Link to="/contact">Contact</Link>,
-    },
+    // {
+    //   key: "Contact",
+    //   label: (
+    //     <Link to="/contact">
+    //       {" "}
+    //       <p className="font-serif">Contact</p>
+    //     </Link>
+    //   ),
+    // },
     ...(!authToken
       ? [
           {
             key: "Sign In",
-            label: <Link to="/signin">SignIn</Link>,
+            label: (
+              <Link to="/signin">
+                {" "}
+                <p className="font-serif">SignIn</p>
+              </Link>
+            ),
           },
         ]
       : []),
@@ -45,7 +65,12 @@ const UserLayoutComponent = ({ children }) => {
       ? [
           {
             key: "Admin",
-            label: <Link to="/admin">Admin</Link>,
+            label: (
+              <Link to="/admin">
+                {" "}
+                <p className="font-serif">Admin</p>
+              </Link>
+            ),
           },
         ]
       : []),
@@ -56,7 +81,8 @@ const UserLayoutComponent = ({ children }) => {
   } = theme.useToken();
 
   return (
-    <Layout className="min-h-screen">
+    <Layout>
+      {/* <Layout className="min-h-screen bg-gray-100"> */}
       <Header
         style={{
           display: "flex",
@@ -82,6 +108,21 @@ const UserLayoutComponent = ({ children }) => {
             style={{ color: "white" }}
           />
         )}
+        {/* conditionally render the profile icon if admin goes to admin page if user uses their own */}
+        {/* {authToken && (
+          <Button
+            type="text"
+            icon={<UserOutlined />}
+            onClick={() => {
+              if (user && user.isAdmin) {
+                navigate("/admin"); // Navigate to admin page if user is admin
+              } else {
+                setDrawerOpen(true); // Open drawer if user is not admin
+              }
+            }}
+            style={{ color: "white" }}
+          />
+        )} */}
       </Header>
       <Content
         style={{
@@ -90,7 +131,8 @@ const UserLayoutComponent = ({ children }) => {
       >
         <div
           style={{
-            background: colorBgContainer,
+            background: "#FDFDFE",
+            // background: colorBgContainer,
             minHeight: 280,
             padding: 24,
             borderRadius: borderRadiusLG,
@@ -101,10 +143,14 @@ const UserLayoutComponent = ({ children }) => {
       </Content>
       <Footer
         style={{
-          textAlign: "left",
+          textAlign: "center",
+          background: colorBgContainer,
         }}
       >
-        Ant Design ©{new Date().getFullYear()} Created by Ant UED
+        <p className="font-serif">
+          Whatever Shop©{new Date().getFullYear()} Created by{" "}
+          <a href="mailto:fehermark88@gmail.com">Mark Feher</a>
+        </p>
       </Footer>
       <UserDrawer
         drawerOpen={drawerOpen}

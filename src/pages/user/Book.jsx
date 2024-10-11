@@ -11,7 +11,6 @@ import {
   theme,
   Typography,
   ConfigProvider,
-  Button,
 } from "antd";
 import huHU from "antd/es/locale/hu_HU"; // Import Hungarian locale for Ant Design
 import dayLocaleData from "dayjs/plugin/localeData";
@@ -24,8 +23,7 @@ dayjs.extend(isSameOrAfter); // Extend dayjs with the plugin
 
 const Book = () => {
   const { user } = useAuth();
-  console.log("book user", user);
-  const { appointments, postAppointmentDb } = useAppointmentContext();
+  const { postAppointment, appointments } = useAppointmentContext();
   const [modalOpen, setModalOpen] = useState(false);
   const { token } = theme.useToken();
   const [selectedDate, setSelectedDate] = useState("");
@@ -54,7 +52,7 @@ const Book = () => {
 
   const submitAppointment = async () => {
     //context function
-    await postAppointmentDb({
+    await postAppointment({
       userId: user?._id,
       username: user?.username,
       email: user?.email,
@@ -127,9 +125,13 @@ const Book = () => {
                   }}
                 >
                   <Typography.Title level={4}>
-                    {selectedDate
-                      ? `${selectedDate} ${selectedTime}`
-                      : "Book an appointment"}
+                    {selectedDate ? (
+                      `${selectedDate} ${selectedTime}`
+                    ) : (
+                      <p className="text-xl font-semibold font-serif">
+                        Book an Appointment
+                      </p>
+                    )}
                   </Typography.Title>
                   <Row gutter={8}>
                     <Col>
@@ -138,8 +140,12 @@ const Book = () => {
                         onChange={(e) => onTypeChange(e.target.value)}
                         value={type}
                       >
-                        <Radio.Button value="month">Month</Radio.Button>
-                        <Radio.Button value="year">Year</Radio.Button>
+                        <Radio.Button value="month">
+                          <p className="font-serif">Month</p>
+                        </Radio.Button>
+                        <Radio.Button value="year">
+                          <p className="font-serif">Year</p>
+                        </Radio.Button>
                       </Radio.Group>
                     </Col>
                     <Col>
@@ -177,7 +183,6 @@ const Book = () => {
           />
         </div>
       </div>
-      <Button onClick={submitAppointment}>Book</Button>
     </ConfigProvider>
   );
 };

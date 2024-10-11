@@ -9,9 +9,14 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     const setUserAuthenticated = async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        console.log("no token in authcontext");
+        setUser(null);
+        setIsAuthenticated(false);
+        return;
+      }
       try {
-        const token = localStorage.getItem("authToken");
-
         if (token) {
           const res = await fetch("http://localhost:3001/api/users/getmyuser", {
             method: "GET",

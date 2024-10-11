@@ -38,6 +38,8 @@ const Book = () => {
   const currentYear = dayjs().year(); // Get the current year
   const currentMonth = dayjs().month(); // Get the current month (0-indexed)
 
+  console.log("user in book page", user);
+
   const disabledDate = (current) => {
     if (!current) return false;
 

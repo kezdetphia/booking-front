@@ -10,10 +10,12 @@ export const AppointmentProvider = ({ children }) => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [disabledDates, setDisabledDates] = useState([]);
 
   // Fetching appointments when the component mounts
   useEffect(() => {
     getAppointments();
+    getDisabledDates();
   }, []);
 
   //Fetch all appointments from db
@@ -172,6 +174,54 @@ export const AppointmentProvider = ({ children }) => {
     }
   };
 
+  const disableDates = async (date, reason) => {
+    const authToken = localStorage.getItem("authToken");
+
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/admincreatedisableddate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({ date, reason }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Server error in disableDates context");
+
+      const data = await res.json();
+      console.log("Dates disabled:", data);
+      setDisabledDates((prev) => [...prev, data.disabledDates]);
+    } catch (err) {
+      console.log("Error while disabling dates in context:", err);
+    }
+  };
+
+  const getDisabledDates = async () => {
+    const authToken = localStorage.getItem("authToken");
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/admingetdisableddates`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error("Server error in getDisabledDates context");
+
+      const data = await res.json();
+      setDisabledDates(data.disabledDates);
+    } catch (err) {
+      console.log("Error while fetching disabled dates in context:", err);
+    }
+  };
+
   return (
     <AppointmentContext.Provider
       value={{
@@ -180,6 +230,8 @@ export const AppointmentProvider = ({ children }) => {
         deleteAppointment,
         loading,
         error,
+        disabledDates,
+        disableDates,
       }}
     >
       {children}

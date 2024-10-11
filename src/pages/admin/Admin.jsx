@@ -3,6 +3,7 @@ import AdminAppointments from "./AdminAppointments";
 import { useAuth } from "../../context/authContext";
 import { useAppointmentContext } from "../../context/AppointmentContext";
 import AdminUsers from "./AdminUsers";
+import OnHoliday from "./OnHoliday";
 
 function Admin({ appointmentDate, componentToRender }) {
   // const { user } = useAuth();
@@ -13,6 +14,7 @@ function Admin({ appointmentDate, componentToRender }) {
         <AdminAppointments appointmentDate={appointmentDate} />
       )}
       {componentToRender === "Users" && <AdminUsers />}
+      {componentToRender === "Taking a day off" && <OnHoliday />}
     </>
   );
 }

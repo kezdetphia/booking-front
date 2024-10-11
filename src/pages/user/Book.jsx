@@ -1,7 +1,9 @@
+// src/pages/user/Book.jsx
 import React, { useState } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/hu"; // Import Hungarian locale for dayjs
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter"; // Import the plugin
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore"; // Import the plugin
 import {
   Calendar,
   Col,
@@ -11,6 +13,7 @@ import {
   theme,
   Typography,
   ConfigProvider,
+  message,
 } from "antd";
 import huHU from "antd/es/locale/hu_HU"; // Import Hungarian locale for Ant Design
 import dayLocaleData from "dayjs/plugin/localeData";
@@ -20,24 +23,54 @@ import { useAppointmentContext } from "../../context/AppointmentContext";
 
 dayjs.extend(dayLocaleData);
 dayjs.extend(isSameOrAfter); // Extend dayjs with the plugin
+dayjs.extend(isSameOrBefore); // Extend dayjs with the plugin
 
 const Book = () => {
   const { user } = useAuth();
-  const { postAppointment, appointments } = useAppointmentContext();
+  const { postAppointment, appointments, disabledDates } =
+    useAppointmentContext();
   const [modalOpen, setModalOpen] = useState(false);
   const { token } = theme.useToken();
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
 
   const currentYear = dayjs().year(); // Get the current year
   const currentMonth = dayjs().month(); // Get the current month (0-indexed)
 
   const disabledDate = (current) => {
+    if (!current) return false;
+
     // Disable days before today
-    return current && current < dayjs().startOf("day");
+    if (current < dayjs().startOf("day")) {
+      return true;
+    }
+
+    // Disable dates from the disabledDates array
+    const currentDateStr = current.format("YYYY/MM/DD");
+    for (const disabled of disabledDates) {
+      if (disabled.date.length === 2) {
+        const [start, end] = disabled.date;
+        if (
+          dayjs(currentDateStr).isSameOrAfter(dayjs(start)) &&
+          dayjs(currentDateStr).isSameOrBefore(dayjs(end))
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   };
 
-  const onDateSelect = (value) => {
+  const onClickonWeekends = (value) => {
+    const dayOfWeek = value.day();
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      setSelectedDate(value.format("YYYY/MM/DD"));
+      messageApi.info("Weekends are not available for booking.");
+      return;
+    }
+
     // Only open the modal if a specific date is selected
     if (value.isSameOrAfter(dayjs(), "day")) {
       setSelectedDate(value.format("YYYY/MM/DD"));
@@ -79,6 +112,7 @@ const Book = () => {
 
   return (
     <ConfigProvider locale={huHU}>
+      {contextHolder}
       <div style={wrapperStyle}>
         <div style={calendarStyle}>
           <AppointmentModal
@@ -92,8 +126,8 @@ const Book = () => {
           />
           <Calendar
             fullscreen={false}
-            onSelect={onDateSelect}
-            disabledDate={disabledDate} // Disable past dates
+            onSelect={onClickonWeekends}
+            disabledDate={disabledDate} // Disable past dates and specified ranges
             headerRender={({ value, type, onChange, onTypeChange }) => {
               const monthOptions = [];
               const localeData = value.localeData();

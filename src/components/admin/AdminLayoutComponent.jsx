@@ -61,7 +61,12 @@ const AdminLayoutComponent = () => {
   };
 
   const sections = () => {
-    const links = ["Appointments", "All Appointments", "Users"];
+    const links = [
+      // "Appointments",
+      "Users",
+      "All Appointments",
+      "Taking a day off",
+    ];
     return (
       <>
         <Link to="/">
@@ -128,7 +133,7 @@ const AdminLayoutComponent = () => {
         onClose={onClose}
         open={open}
       >
-        {sections()}
+        <div className="flex flex-col gap-2">{sections()}</div>
       </Drawer>
     </Layout>
   );

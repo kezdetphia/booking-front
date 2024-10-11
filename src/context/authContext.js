@@ -18,13 +18,16 @@ export const AuthContextProvider = ({ children }) => {
       }
       try {
         if (token) {
-          const res = await fetch("http://localhost:3001/api/users/getmyuser", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-            },
-          });
+          const res = await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/api/users/getmyuser`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+              },
+            }
+          );
 
           if (!res.ok) {
             throw new Error("Authcontext user fetch went wrong a bit");

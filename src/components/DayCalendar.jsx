@@ -1,6 +1,7 @@
-import React from "react";
+// src/components/DayCalendar.jsx
+import React, { useState } from "react";
 import { SmileOutlined } from "@ant-design/icons";
-import { Timeline, Popover, message, Popconfirm, Button } from "antd";
+import { Timeline, message, Popconfirm, Button } from "antd";
 import AppointmentEditForm from "./AppointmentEditForm";
 import { useAppointmentContext } from "../context/AppointmentContext";
 import { useAuth } from "../context/authContext";
@@ -15,6 +16,7 @@ const DayCalendar = ({
   const { deleteAppointment, appointments } = useAppointmentContext();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [clickedTime, setClickedTime] = useState(null); // State to track clicked time
   const hours = [
     "07:00",
     "08:00",
@@ -53,7 +55,6 @@ const DayCalendar = ({
   const handleDelete = async (e, appId) => {
     e.stopPropagation(); // Prevent triggering the parent click event
     console.log("Deleting appointment with ID:", appId);
-    // Call your delete function here
     await deleteAppointment(appId);
     message.success("Appointment deleted successfully");
   };
@@ -77,6 +78,7 @@ const DayCalendar = ({
       } else if (!isTaken && isInteractive) {
         if (user) {
           setSelectedTime(time);
+          setClickedTime(time); // Set the clicked time
         } else {
           message.error("Please login to book an appointment");
           setTimeout(() => {
@@ -84,11 +86,6 @@ const DayCalendar = ({
           }, 3000);
         }
       }
-    };
-
-    const content = (appointment) => {
-      if (!appointment) return null;
-      return <AppointmentEditForm appointment={appointment} />;
     };
 
     const appointmentDisplay = (
@@ -99,7 +96,12 @@ const DayCalendar = ({
             isAdmin || (!isTaken && isInteractive) ? "pointer" : "not-allowed",
           borderBottom: "1px solid #ccc",
           padding: "8px 0",
-          backgroundColor: !isAdmin && isTaken ? "#ffcccc" : "transparent", // Light red background for taken slots if not admin
+          backgroundColor:
+            clickedTime === time
+              ? "#ccffcc"
+              : !isAdmin && isTaken
+              ? "#ffcccc"
+              : "transparent", // Green for clicked time
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -114,7 +116,6 @@ const DayCalendar = ({
             : "Available"}
         </p>
         {user?.isAdmin && isTaken && appointment && (
-          //delete popup
           <Popconfirm
             title={<p className="font-serif">Delete the task</p>}
             description={
@@ -127,7 +128,6 @@ const DayCalendar = ({
           >
             <div className="pr-2">
               <Button danger>
-                {" "}
                 <p className="font-serif">Delete</p>
               </Button>
             </div>
@@ -138,17 +138,7 @@ const DayCalendar = ({
 
     return {
       color: isTaken ? "red" : "green",
-      children: user ? (
-        <Popover
-          placement="bottom"
-          content={content(appointment)}
-          title="Appointment"
-        >
-          {appointmentDisplay}
-        </Popover>
-      ) : (
-        appointmentDisplay
-      ),
+      children: appointmentDisplay,
     };
   });
 

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button, Layout, Menu, theme } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined , CrownOutlined} from "@ant-design/icons";
 import UserDrawer from "./userDrawer";
 
 const { Header, Content, Footer } = Layout;
@@ -61,19 +61,19 @@ const UserLayoutComponent = ({ children }) => {
           },
         ]
       : []),
-    ...(user && user.isAdmin
-      ? [
-          {
-            key: "Admin",
-            label: (
-              <Link to="/admin">
-                {" "}
-                <p className="font-serif">Admin</p>
-              </Link>
-            ),
-          },
-        ]
-      : []),
+    // ...(user && user.isAdmin
+    //   ? [
+    //       {
+    //         key: "Admin",
+    //         label: (
+    //           <Link to="/admin">
+    //             {" "}
+    //             <p className="font-serif">Admin</p>
+    //           </Link>
+    //         ),
+    //       },
+    //     ]
+    //   : []),
   ];
 
   const {
@@ -103,8 +103,8 @@ const UserLayoutComponent = ({ children }) => {
         {authToken && (
           <Button
             type="text"
-            icon={<UserOutlined />}
-            onClick={() => setDrawerOpen(true)}
+            icon={user?.isAdmin ? <CrownOutlined  /> : <UserOutlined />}
+            onClick={() => {user?.isAdmin ? navigate('/admin') : setDrawerOpen(true)}}
             style={{ color: "white" }}
           />
         )}

@@ -29,7 +29,7 @@ export const AppointmentProvider = ({ children }) => {
       }
 
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/appointments/getappointments`,
+        `${process.env.REACT_APP_API_URL}/api/appointments/getappointments`,
         {
           method: "GET",
           headers: {
@@ -73,7 +73,7 @@ export const AppointmentProvider = ({ children }) => {
 
       console.log("Sending POST request to create appointment...");
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/appointments/create`,
+        `${process.env.REACT_APP_API_URL}/api/appointments/create`,
         {
           method: "POST",
           headers: {
@@ -142,7 +142,7 @@ export const AppointmentProvider = ({ children }) => {
 
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/appointments/deleteappointment/${appointmentId}`,
+        `${process.env.REACT_APP_API_URL}/api/appointments/deleteappointment/${appointmentId}`,
         {
           method: "DELETE",
           headers: {
@@ -179,7 +179,7 @@ export const AppointmentProvider = ({ children }) => {
 
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/admin/admincreatedisableddate`,
+        `${process.env.REACT_APP_API_URL}/api/admin/admincreatedisableddate`,
         {
           method: "POST",
           headers: {
@@ -204,7 +204,7 @@ export const AppointmentProvider = ({ children }) => {
     const authToken = localStorage.getItem("authToken");
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/admin/admingetdisableddates`,
+        `${process.env.REACT_APP_API_URL}/api/admin/admingetdisableddates`,
         {
           method: "GET",
           headers: {

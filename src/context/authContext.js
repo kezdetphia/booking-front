@@ -7,6 +7,8 @@ export const AuthContextProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(undefined);
   const [authLoading, setAuthLoading] = useState(true);
 
+  console.log("authcontext run", user);
+
   useEffect(() => {
     const setUserAuthenticated = async () => {
       const token = localStorage.getItem("authToken");
@@ -19,7 +21,7 @@ export const AuthContextProvider = ({ children }) => {
       try {
         if (token) {
           const res = await fetch(
-            `${process.env.REACT_APP_BACKEND_URL}/api/users/getmyuser`,
+            `${process.env.REACT_APP_API_URL}/api/users/getmyuser`,
             {
               method: "GET",
               headers: {
@@ -52,6 +54,12 @@ export const AuthContextProvider = ({ children }) => {
     };
     setUserAuthenticated();
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    setUser(null);
+    // navigate("/signin");
+  };
 
   return (
     <AuthContext.Provider

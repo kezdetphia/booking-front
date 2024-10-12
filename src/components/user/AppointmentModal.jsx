@@ -39,7 +39,7 @@ const AppointmentModal = ({
   useEffect(() => {
     if (confirmSubmit === true) {
       submitAppointment();
-      navigate("/");
+      navigate("/appointment-confirm");
     }
   }, [confirmSubmit]);
 
@@ -52,7 +52,7 @@ const AppointmentModal = ({
           </p>
         }
         placement="right"
-        width={500}
+        width={400}
         onClose={onClose}
         open={modalOpen}
         extra={

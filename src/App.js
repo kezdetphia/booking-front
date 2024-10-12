@@ -38,19 +38,14 @@ const App = () => {
             <Route
               path="/admin/*"
               element={
-                <AdminLayoutComponent>
-                  <Routes>
-                    <Route
-                      path=""
-                      element={
-                        <AdminRoute adminOnly={true}>
-                          <Admin />
-                        </AdminRoute>
-                      }
-                    />
-                    {/* Add more admin-specific routes here if needed */}
-                  </Routes>
-                </AdminLayoutComponent>
+                <AdminRoute adminOnly={true}>
+                  <AdminLayoutComponent>
+                    <Routes>
+                      <Route path="" element={<Admin />} />
+                      {/* Add more admin-specific routes here if needed */}
+                    </Routes>
+                  </AdminLayoutComponent>
+                </AdminRoute>
               }
             />
           </Routes>

@@ -3,15 +3,14 @@ import React from "react";
 import { Button, DatePicker, Form, Input, Card, Space, message } from "antd";
 import dayjs from "dayjs"; // Import dayjs for date formatting
 import { useAppointmentContext } from "../../context/AppointmentContext";
-const { RangePicker } = DatePicker;
 
 const OnHoliday = () => {
   const { disableDates } = useAppointmentContext();
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
-    if (!values.date && (!values.range || values.range.length === 0)) {
-      message.error("Please select at least one date or date range.");
+    if (!values.date1 || !values.date2) {
+      message.error("Please select both start and end dates.");
       return;
     }
     console.log("Form Values:", values);
@@ -19,25 +18,25 @@ const OnHoliday = () => {
   };
 
   const submitDisabledDates = async (values) => {
-    const formattedDate = values.date
-      ? dayjs(values.date).format("YYYY/MM/DD")
-      : null;
-    const formattedRange = values.range
-      ? values.range.map((date) => dayjs(date).format("YYYY/MM/DD"))
-      : null;
+    const formattedDates = [
+      dayjs(values.date1).format("YYYY/MM/DD"),
+      dayjs(values.date2).format("YYYY/MM/DD"),
+    ];
 
-    console.log("Formatted Date:", formattedDate);
-    console.log("Formatted Range:", formattedRange);
+    console.log("Formatted Dates:", formattedDates);
 
-    // Assuming disableDates can handle both single date and range
-    await disableDates(formattedDate || formattedRange, values.reason);
+    // Assuming disableDates can handle an array of dates
+    await disableDates(formattedDates, values.reason);
   };
 
   return (
-    <div className="flex justify-center items-center h-full">
+    <div className="flex justify-center items-center h-full flex-col">
+      <h1 className="text-2xl font-bold font-serif text-center pt-2 pb-10">
+        Take a day off or two
+      </h1>
       <Space direction="vertical" size={16}>
         <Card
-          title="Block dates"
+          title={<p className="font-serif">Block dates</p>}
           style={{
             width: "100%",
             height: "100%",
@@ -58,25 +57,25 @@ const OnHoliday = () => {
             }}
           >
             <Form.Item
-              label="Reason"
+              label={<p className="font-serif">Reason</p>}
               name="reason"
               rules={[{ required: true, message: "Please input the reason!" }]}
             >
               <Input />
             </Form.Item>
 
-            <Form.Item label="Date" name="date">
+            <Form.Item label={<p className="font-serif">From</p>} name="date1">
               <DatePicker />
             </Form.Item>
 
-            <Form.Item label="Range" name="range">
-              <RangePicker />
+            <Form.Item label={<p className="font-serif">Till</p>} name="date2">
+              <DatePicker />
             </Form.Item>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center pt-10">
               <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  Submit
+                <Button size="large" type="primary" htmlType="submit">
+                  <p className="font-serif">Submit</p>
                 </Button>
               </Form.Item>
             </div>

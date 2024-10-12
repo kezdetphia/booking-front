@@ -26,7 +26,7 @@ const SignIn = () => {
   const loginUser = async (values) => {
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/users/signin`,
+        `${process.env.REACT_APP_API_URL}/api/users/signin`,
         {
           method: "POST",
           headers: {

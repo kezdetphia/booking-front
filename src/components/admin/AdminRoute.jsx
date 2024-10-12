@@ -1,9 +1,8 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../../context/authContext"; // Assuming you have a hook to access auth context
-
-const PrivateRoute = ({ children, adminOnly }) => {
-  const { user } = useAuth(); // Get the current user from context
+import { useAuth } from "../../context/authContext";
+const AdminRoute = ({ children, adminOnly }) => {
+  const { user } = useAuth();
   console.log("is user???", user);
 
   if (!user) {
@@ -20,4 +19,4 @@ const PrivateRoute = ({ children, adminOnly }) => {
   return children;
 };
 
-export default PrivateRoute;
+export default AdminRoute;

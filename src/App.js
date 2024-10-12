@@ -12,6 +12,7 @@ import { AppointmentProvider } from "./context/AppointmentContext";
 import AdminRoute from "./components/admin/AdminRoute";
 
 import Admin from "./pages/admin/Admin";
+import UserDetails from "./pages/user/UserDetails";
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
                     <Route path="/book" element={<Book />} />
                     <Route path="/signin" element={<SignIn />} />
                     <Route path="/signup" element={<SignUp />} />
+                    <Route path="/user/:id" element={<UserDetails />} />
                   </Routes>
                 </UserLayoutComponent>
               }
@@ -38,11 +40,11 @@ const App = () => {
             <Route
               path="/admin/*"
               element={
-                <AdminRoute adminOnly={true}>
+                <AdminRoute>
                   <AdminLayoutComponent>
                     <Routes>
-                      <Route path="" element={<Admin />} />
-                      {/* Add more admin-specific routes here if needed */}
+                      <Route path="/" element={<Admin />} />
+                      <Route path="user/:id" element={<UserDetails />} />
                     </Routes>
                   </AdminLayoutComponent>
                 </AdminRoute>

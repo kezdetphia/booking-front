@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, List, Skeleton, Input, Button } from "antd";
 import { Link, useNavigate } from "react-router-dom";
+import { PhoneTwoTone, MailTwoTone } from "@ant-design/icons";
 
 //TODOL: Check if filteredUsers is necessary to update on fetch
 
@@ -67,8 +68,21 @@ const AdminUsers = () => {
         renderItem={(user) => (
           <List.Item
             actions={[
-              <a key="list-loadmore-edit">edit</a>,
-              <a key="list-loadmore-more">more</a>,
+              <div className="flex gap-5">
+                <a key="list-loadmore-email" href={`mailto:${user.email}`}>
+                  <MailTwoTone
+                    twoToneColor="#1890ff" // Blue color for email
+                    style={{ fontSize: "25px" }}
+                  />
+                </a>
+
+                <a key="list-loadmore-call" href={`tel:${user.phoneNumber}`}>
+                  <PhoneTwoTone
+                    twoToneColor="#32CD32"
+                    style={{ fontSize: "28px" }} // Adjust the size here
+                  />
+                </a>
+              </div>,
             ]}
           >
             <Skeleton avatar title={false} loading={initLoading} active>
@@ -80,13 +94,15 @@ const AdminUsers = () => {
                       : "?"}
                   </Avatar>
                 }
-                title={
-                  <Link to={`/admin/user/${user?._id}`}>{user.username}</Link>
-                }
-                // title={<Link to={`/user/${user?._id}`}>{user.username}</Link>}
+                // Example usage in a component
+                // title={
+                //   <Link to={`/admin/user/${user?._id}`}>{user.username}</Link>
+                // }
+                title={<Link to={`/user/${user?._id}`}>{user.username}</Link>}
                 description={
                   <div>
                     <div>Email: {user.email}</div>
+                    <div>Number: {user.phoneNumber}</div>
                     <div>
                       Registered:{" "}
                       {new Date(user.createdAt).toLocaleDateString()}

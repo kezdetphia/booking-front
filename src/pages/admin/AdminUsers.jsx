@@ -94,11 +94,9 @@ const AdminUsers = () => {
                       : "?"}
                   </Avatar>
                 }
-                // Example usage in a component
-                // title={
-                //   <Link to={`/admin/user/${user?._id}`}>{user.username}</Link>
-                // }
-                title={<Link to={`/user/${user?._id}`}>{user.username}</Link>}
+                title={
+                  <Link to={`/admin/user/${user?._id}`}>{user.username}</Link>
+                }
                 description={
                   <div>
                     <div>Email: {user.email}</div>

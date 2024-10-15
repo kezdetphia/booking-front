@@ -228,13 +228,14 @@
 // export default AdminLayoutComponent;
 
 // src/components/admin/AdminLayoutComponent.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Menu, Button, Drawer, Dropdown } from "antd";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { EllipsisOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useAuth } from "../../context/authContext";
 import AdminDailyAppointments from "../../pages/admin/AdminDailyAppointments";
+import { useAppointmentDateContext } from "../../context/appointmentDateContext";
 
 const { Header, Content } = Layout;
 
@@ -263,7 +264,11 @@ const AdminLayoutComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(dateItems[0].date); // Default to "Today"
+  const { selectedDate, setSelectedDate } = useAppointmentDateContext();
+  // const [selectedDate, setSelectedDate] = useState(dateItems[0].date); // Default to "Today"
+  useEffect(() => {
+    setSelectedDate(dateItems[0].date);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");

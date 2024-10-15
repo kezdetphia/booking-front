@@ -20,6 +20,7 @@ import dayLocaleData from "dayjs/plugin/localeData";
 import AppointmentModal from "../../components/user/AppointmentModal";
 import { useAuth } from "../../context/authContext";
 import { useAppointmentContext } from "../../context/AppointmentContext";
+import { useAppointmentDateContext } from "../../context/appointmentDateContext";
 
 dayjs.extend(dayLocaleData);
 dayjs.extend(isSameOrAfter); // Extend dayjs with the plugin
@@ -31,9 +32,12 @@ const Book = () => {
     useAppointmentContext();
   const [modalOpen, setModalOpen] = useState(false);
   const { token } = theme.useToken();
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
+  // const [selectedDate, setSelectedDate] = useState("");
+  // const [selectedTime, setSelectedTime] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
+
+  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime } =
+    useAppointmentDateContext();
 
   const currentYear = dayjs().year(); // Get the current year
   const currentMonth = dayjs().month(); // Get the current month (0-indexed)
@@ -120,9 +124,9 @@ const Book = () => {
           <AppointmentModal
             modalOpen={modalOpen}
             setModalOpen={setModalOpen}
-            setSelectedTime={setSelectedTime}
-            selectedTime={selectedTime}
-            selectedDate={selectedDate}
+            // setSelectedTime={setSelectedTime}
+            // selectedTime={selectedTime}
+            // selectedDate={selectedDate}
             appointments={appointments}
             submitAppointment={submitAppointment}
           />

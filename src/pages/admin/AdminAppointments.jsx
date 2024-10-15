@@ -3,7 +3,8 @@ import { useAuth } from "../../context/authContext";
 import DayCalendar from "../../components/DayCalendar";
 import { useAppointmentContext } from "../../context/AppointmentContext";
 
-function AdminAppointments({ appointmentDate }) {
+function AdminAppointments() {
+  // function AdminAppointments({ appointmentDate }) {
   const { appointments } = useAppointmentContext();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -25,7 +26,7 @@ function AdminAppointments({ appointmentDate }) {
         <div>Loading appointments...</div>
       ) : filteredAppointments.length > 0 ? (
         <DayCalendar
-          selectedDate={appointmentDate}
+          // selectedDate={appointmentDate}
           isInteractive={true}
           isAdmin={user?.isAdmin}
         />

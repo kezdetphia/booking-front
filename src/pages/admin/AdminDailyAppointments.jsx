@@ -25,10 +25,13 @@
 import React, { useEffect, useState } from "react";
 import { useAppointmentContext } from "../../context/AppointmentContext";
 import DayCalendar from "../../components/DayCalendar";
+import { useAppointmentDateContext } from "../../context/appointmentDateContext";
 
-const AdminDailyAppointments = ({ selectedDate }) => {
+const AdminDailyAppointments = () => {
+  // const AdminDailyAppointments = ({ selectedDate }) => {
   const { appointments } = useAppointmentContext();
   const [loading, setLoading] = useState(true);
+  const { selectedDate } = useAppointmentDateContext();
 
   console.log("selectedDate", selectedDate);
 
@@ -49,7 +52,7 @@ const AdminDailyAppointments = ({ selectedDate }) => {
         <div>Loading appointments...</div>
       ) : filteredAppointments.length > 0 ? (
         <DayCalendar
-          selectedDate={selectedDate}
+          // selectedDate={selectedDate}
           isInteractive={true}
           isAdmin={true}
         />

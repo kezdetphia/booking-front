@@ -11,8 +11,12 @@ import { AuthContextProvider } from "./context/authContext";
 import { AppointmentProvider } from "./context/AppointmentContext";
 import AdminRoute from "./components/admin/AdminRoute";
 
-import Admin from "./pages/admin/Admin";
+// import Admin from "./pages/admin/Admin";
 import UserDetails from "./pages/user/UserDetails";
+import AdminDailyAppointments from "./pages/admin/AdminDailyAppointments";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminAllAppointments from "./pages/admin/AdminAllAppointments";
+import OnHoliday from "./pages/admin/OnHoliday";
 
 const App = () => {
   return (
@@ -41,15 +45,19 @@ const App = () => {
               path="/admin/*"
               element={
                 <AdminRoute>
-                  <AdminLayoutComponent>
-                    <Routes>
-                      <Route path="/" element={<Admin />} />
-                      <Route path="user/:id" element={<UserDetails />} />
-                    </Routes>
-                  </AdminLayoutComponent>
+                  <AdminLayoutComponent />
                 </AdminRoute>
               }
-            />
+            >
+              <Route index element={<AdminDailyAppointments />} />
+              <Route path="users" element={<AdminUsers />} />
+              {/* <Route path="user/:id" element={<UserDetails />} /> */}
+              <Route
+                path="all-appointments"
+                element={<AdminAllAppointments />}
+              />
+              <Route path="day-off" element={<OnHoliday />} />
+            </Route>
           </Routes>
         </Router>
       </AppointmentProvider>

@@ -8,6 +8,7 @@ export const useAppointmentDateContext = () =>
 export const AppointmentDateProvider = ({ children }) => {
   const [appointmentDate, setAppointmentDate] = useState(null);
   const [selectedDate, setSelectedDate] = useState();
+  const [selectedTime, setSelectedTime] = useState();
 
   return (
     <AppointmentDateContext.Provider
@@ -16,6 +17,8 @@ export const AppointmentDateProvider = ({ children }) => {
         setAppointmentDate,
         selectedDate,
         setSelectedDate,
+        selectedTime,
+        setSelectedTime,
       }}
     >
       {children}

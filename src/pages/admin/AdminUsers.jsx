@@ -1,18 +1,14 @@
 // src/pages/admin/AdminUsers.jsx
 import React, { useEffect, useState } from "react";
-import { Avatar, List, Skeleton, Input, Button } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { Avatar, List, Skeleton, Input } from "antd";
+import { Link } from "react-router-dom";
 import { PhoneTwoTone, MailTwoTone } from "@ant-design/icons";
-
-//TODOL: Check if filteredUsers is necessary to update on fetch
 
 const AdminUsers = () => {
   const [initLoading, setInitLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -66,51 +62,66 @@ const AdminUsers = () => {
         itemLayout="horizontal"
         dataSource={filteredUsers}
         renderItem={(user) => (
-          <List.Item
-            actions={[
-              <div className="flex gap-5">
-                <a key="list-loadmore-email" href={`mailto:${user.email}`}>
-                  <MailTwoTone
-                    twoToneColor="#1890ff" // Blue color for email
-                    style={{ fontSize: "25px" }}
-                  />
-                </a>
-
-                <a key="list-loadmore-call" href={`tel:${user.phoneNumber}`}>
-                  <PhoneTwoTone
-                    twoToneColor="#32CD32"
-                    style={{ fontSize: "28px" }} // Adjust the size here
-                  />
-                </a>
-              </div>,
-            ]}
+          <Link
+            to={`/admin/user/${user?._id}`}
+            style={{ display: "block", textDecoration: "none" }}
           >
-            <Skeleton avatar title={false} loading={initLoading} active>
-              <List.Item.Meta
-                avatar={
-                  <Avatar style={{ backgroundColor: "#87d068" }}>
-                    {user.username
-                      ? user.username.charAt(0).toUpperCase()
-                      : "?"}
-                  </Avatar>
-                }
-                title={
-                  <Link to={`/admin/user/${user?._id}`}>{user.username}</Link>
-                }
-                description={
-                  <div>
-                    <div>Email: {user.email}</div>
-                    <div>Number: {user.phoneNumber}</div>
+            <List.Item
+              actions={[
+                <div className="flex gap-5">
+                  <a key="list-loadmore-email" href={`mailto:${user.email}`}>
+                    <MailTwoTone
+                      twoToneColor="#1890ff"
+                      style={{ fontSize: "25px" }}
+                    />
+                  </a>
+                  <a key="list-loadmore-call" href={`tel:${user.phoneNumber}`}>
+                    <PhoneTwoTone
+                      twoToneColor="#32CD32"
+                      style={{ fontSize: "28px" }}
+                    />
+                  </a>
+                </div>,
+              ]}
+            >
+              <Skeleton avatar title={false} loading={initLoading} active>
+                <List.Item.Meta
+                  avatar={
+                    <Avatar style={{ backgroundColor: "#87d068" }}>
+                      {user.username
+                        ? user.username.charAt(0).toUpperCase()
+                        : "?"}
+                    </Avatar>
+                  }
+                  title={
+                    <p className="font-serif font-semibold">{user.username}</p>
+                  }
+                  description={
                     <div>
-                      Registered:{" "}
-                      {new Date(user.createdAt).toLocaleDateString()}
+                      <div>
+                        <span>Email: </span>
+                        <span>{user.email}</span>
+                      </div>
+                      <div>
+                        <span>Number: </span>
+                        <span>{user.phoneNumber}</span>
+                      </div>
+                      <div>
+                        <span>Registered: </span>
+                        <span>
+                          {new Date(user.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div>
+                        <span>Appointments: </span>
+                        <span>{user.appointments?.length || 0}</span>
+                      </div>
                     </div>
-                    <div>Appointments: {user.appointments?.length || 0}</div>
-                  </div>
-                }
-              />
-            </Skeleton>
-          </List.Item>
+                  }
+                />
+              </Skeleton>
+            </List.Item>
+          </Link>
         )}
       />
     </div>

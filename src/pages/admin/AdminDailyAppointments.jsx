@@ -28,12 +28,9 @@ import DayCalendar from "../../components/DayCalendar";
 import { useAppointmentDateContext } from "../../context/appointmentDateContext";
 
 const AdminDailyAppointments = () => {
-  // const AdminDailyAppointments = ({ selectedDate }) => {
   const { appointments } = useAppointmentContext();
   const [loading, setLoading] = useState(true);
   const { selectedDate } = useAppointmentDateContext();
-
-  console.log("selectedDate", selectedDate);
 
   useEffect(() => {
     if (appointments.length > 0) {
@@ -51,11 +48,7 @@ const AdminDailyAppointments = () => {
       {loading ? (
         <div>Loading appointments...</div>
       ) : filteredAppointments.length > 0 ? (
-        <DayCalendar
-          // selectedDate={selectedDate}
-          isInteractive={true}
-          isAdmin={true}
-        />
+        <DayCalendar isInteractive={true} isAdmin={true} />
       ) : (
         <div>No appointments for this date.</div>
       )}

@@ -32,11 +32,9 @@ const Book = () => {
     useAppointmentContext();
   const [modalOpen, setModalOpen] = useState(false);
   const { token } = theme.useToken();
-  // const [selectedDate, setSelectedDate] = useState("");
-  // const [selectedTime, setSelectedTime] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
 
-  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime } =
+  const { selectedDate, setSelectedDate, selectedTime } =
     useAppointmentDateContext();
 
   const currentYear = dayjs().year(); // Get the current year
@@ -124,9 +122,6 @@ const Book = () => {
           <AppointmentModal
             modalOpen={modalOpen}
             setModalOpen={setModalOpen}
-            // setSelectedTime={setSelectedTime}
-            // selectedTime={selectedTime}
-            // selectedDate={selectedDate}
             appointments={appointments}
             submitAppointment={submitAppointment}
           />

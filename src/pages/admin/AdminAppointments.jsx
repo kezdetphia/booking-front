@@ -25,11 +25,7 @@ function AdminAppointments() {
       {loading ? (
         <div>Loading appointments...</div>
       ) : filteredAppointments.length > 0 ? (
-        <DayCalendar
-          // selectedDate={appointmentDate}
-          isInteractive={true}
-          isAdmin={user?.isAdmin}
-        />
+        <DayCalendar isInteractive={true} isAdmin={user?.isAdmin} />
       ) : (
         <div>No appointments for this date.</div>
       )}

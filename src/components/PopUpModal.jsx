@@ -2,14 +2,11 @@
 import React from "react";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Modal } from "antd";
+import { useAppointmentDateContext } from "../context/appointmentDateContext";
 
-const PopUpModal = ({
-  visible,
-  onClose,
-  selectedTime,
-  selectedDate,
-  setConfirmSubmit,
-}) => {
+const PopUpModal = ({ visible, onClose, setConfirmSubmit }) => {
+  const { selectedTime, selectedDate } = useAppointmentDateContext();
+
   return (
     <Modal
       title="Your appointment:"

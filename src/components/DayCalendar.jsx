@@ -6,15 +6,12 @@ import AppointmentEditForm from "./AppointmentEditForm";
 import { useAppointmentContext } from "../context/AppointmentContext";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
+import { useAppointmentDateContext } from "../context/appointmentDateContext";
 
-const DayCalendar = ({
-  selectedDate,
-  setSelectedTime,
-  isInteractive,
-  isAdmin,
-}) => {
+const DayCalendar = ({ isInteractive, isAdmin }) => {
   const { deleteAppointment, appointments } = useAppointmentContext();
   const { user } = useAuth();
+  const { setSelectedTime, selectedDate } = useAppointmentDateContext();
   const navigate = useNavigate();
   const [clickedTime, setClickedTime] = useState(null); // State to track clicked time
   const hours = [

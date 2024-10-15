@@ -11,47 +11,64 @@ import { AuthContextProvider } from "./context/authContext";
 import { AppointmentProvider } from "./context/AppointmentContext";
 import AdminRoute from "./components/admin/AdminRoute";
 
-import Admin from "./pages/admin/Admin";
+// import Admin from "./pages/admin/Admin";
 import UserDetails from "./pages/user/UserDetails";
+import AdminDailyAppointments from "./pages/admin/AdminDailyAppointments";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminAllAppointments from "./pages/admin/AdminAllAppointments";
+import OnHoliday from "./pages/admin/OnHoliday";
+import { AppointmentDateProvider } from "./context/appointmentDateContext";
+import AppointmentConfirm from "./pages/user/AppointmentConfirm";
 
 const App = () => {
   return (
     <AuthContextProvider>
       <AppointmentProvider>
-        <Router>
-          <Routes>
-            {/* Public Routes */}
-            <Route
-              path="*"
-              element={
-                <UserLayoutComponent>
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/book" element={<Book />} />
-                    <Route path="/signin" element={<SignIn />} />
-                    <Route path="/signup" element={<SignUp />} />
-                    <Route path="/user/:id" element={<UserDetails />} />
-                  </Routes>
-                </UserLayoutComponent>
-              }
-            />
-
-            {/* Admin Routes */}
-            <Route
-              path="/admin/*"
-              element={
-                <AdminRoute>
-                  <AdminLayoutComponent>
+        <AppointmentDateProvider>
+          <Router>
+            <Routes>
+              {/* Public Routes */}
+              <Route
+                path="*"
+                element={
+                  <UserLayoutComponent>
                     <Routes>
-                      <Route path="/" element={<Admin />} />
-                      <Route path="user/:id" element={<UserDetails />} />
+                      <Route path="/" element={<Home />} />
+                      <Route path="/book" element={<Book />} />
+                      <Route path="/signin" element={<SignIn />} />
+                      <Route path="/signup" element={<SignUp />} />
+                      <Route
+                        path="/appointment-confirm"
+                        element={<AppointmentConfirm />}
+                      />
+                      {/* <Route path="/user/:id" element={<UserDetails />} /> */}
                     </Routes>
-                  </AdminLayoutComponent>
-                </AdminRoute>
-              }
-            />
-          </Routes>
-        </Router>
+                  </UserLayoutComponent>
+                }
+              />
+
+              {/* Admin Routes */}
+              <Route
+                path="/admin/*"
+                element={
+                  <AdminRoute>
+                    <AdminLayoutComponent />
+                  </AdminRoute>
+                }
+              >
+                <Route index element={<AdminDailyAppointments />} />
+                <Route path="users" element={<AdminUsers />} />
+                {/* <Route path="user/:id" element={<UserDetails />} /> */}
+                <Route
+                  path="all-appointments"
+                  element={<AdminAllAppointments />}
+                />
+                <Route path="day-off" element={<OnHoliday />} />
+                <Route path="user/:id" element={<UserDetails />} />
+              </Route>
+            </Routes>
+          </Router>
+        </AppointmentDateProvider>
       </AppointmentProvider>
     </AuthContextProvider>
   );

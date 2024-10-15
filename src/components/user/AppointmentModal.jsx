@@ -4,16 +4,15 @@ import { Button, Drawer, Space } from "antd";
 import DayCalendar from "../DayCalendar";
 import PopUpModal from "../PopUpModal";
 import { useNavigate } from "react-router-dom";
-
+import { useAppointmentDateContext } from "../../context/appointmentDateContext";
 const AppointmentModal = ({
   setModalOpen,
   modalOpen,
-  setSelectedTime,
-  selectedTime,
-  selectedDate,
   appointments,
   submitAppointment,
 }) => {
+  const { selectedTime, selectedDate } = useAppointmentDateContext();
+
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmSubmit, setConfirmSubmit] = useState(false);
 
@@ -66,18 +65,11 @@ const AppointmentModal = ({
           </Space>
         }
       >
-        <DayCalendar
-          selectedDate={selectedDate}
-          setSelectedTime={setSelectedTime}
-          isInteractive={true}
-          appointments={appointments}
-        />
+        <DayCalendar isInteractive={true} appointments={appointments} />
       </Drawer>
       <PopUpModal
         visible={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
-        selectedTime={selectedTime}
-        selectedDate={selectedDate}
         setConfirmSubmit={setConfirmSubmit}
       />
     </>

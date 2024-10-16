@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Avatar, List, Skeleton, Select, Input } from "antd";
 import dayjs from "dayjs";
 import { useAppointmentContext } from "../../context/AppointmentContext";
+import { Link } from "react-router-dom";
 
 const { Option } = Select;
 
+// TODO: Need to change the layout of the appointment details since Link messed it uo
 function AdminAllAppointments() {
   const [initLoading, setInitLoading] = useState(true);
   const [list, setList] = useState([]);
@@ -96,32 +98,34 @@ function AdminAllAppointments() {
               renderItem={(item) => (
                 <List.Item
                   actions={[
-                    <a key="list-loadmore-edit">edit</a>,
-                    <a key="list-loadmore-more">more</a>,
+                    <a key="list-loadmore-edit">Edit</a>,
+                    <a key="list-loadmore-more">Delete</a>,
                   ]}
                 >
                   <Skeleton avatar title={false} loading={item.loading} active>
-                    <List.Item.Meta
-                      avatar={
-                        <Avatar
-                          style={{
-                            backgroundColor: "#FFDAB9", // Peach background
-                            color: "#FFFFFF", // White text
-                          }}
-                        >
-                          {item.username
-                            ? item.username.charAt(0).toUpperCase()
-                            : "?"}
-                        </Avatar>
-                      }
-                      title={<a href="https://ant.design">{item.username}</a>}
-                      description={
-                        <div>
-                          <div>{item.desc.slice(0, 20)}...</div>
-                          <div>{`${item.date} at ${item.time}`}</div>
-                        </div>
-                      }
-                    />
+                    <Link to={`/admin/one-appointment/${item._id}`}>
+                      <List.Item.Meta
+                        avatar={
+                          <Avatar
+                            style={{
+                              backgroundColor: "#FFDAB9", // Peach background
+                              color: "#FFFFFF", // White text
+                            }}
+                          >
+                            {item.username
+                              ? item.username.charAt(0).toUpperCase()
+                              : "?"}
+                          </Avatar>
+                        }
+                        title={<p>{item.username}</p>}
+                        description={
+                          <div>
+                            <div>{item.desc.slice(0, 20)}...</div>
+                            <div>{`${item.date} at ${item.time}`}</div>
+                          </div>
+                        }
+                      />
+                    </Link>
                   </Skeleton>
                 </List.Item>
               )}

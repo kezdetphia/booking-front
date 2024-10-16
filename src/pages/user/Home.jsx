@@ -2,6 +2,8 @@
 import React from "react";
 import { Carousel, Image, Button, Divider } from "antd";
 import { useNavigate } from "react-router-dom";
+import color from "../../assets/color.avif";
+import color1 from "../../assets/color1.avif";
 const Home = () => {
   const navigate = useNavigate();
   return (
@@ -36,7 +38,7 @@ const Home = () => {
                 // height={500}
                 // maxWidth={100}
                 // className="w-full h-full object-cover" // Full width and height, cover the carousel
-                src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                src={color1}
               />
             </div>
             <div className="w-full h-full">
@@ -45,7 +47,7 @@ const Home = () => {
                 // height={500}
                 // maxWidth={100}
                 // className="w-full h-full object-cover" // Full width and height, cover the carousel
-                src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                src={color}
               />
             </div>
           </Carousel>
@@ -59,18 +61,12 @@ const Home = () => {
         <p className="font-serif">
           Mesa Nail offers a variety of beauty enhancements such as (manicure,
           pedicure, UV gel). Our licensed and certified professionals provide
-          with a uniquely customized experience. A unique destination to relax
-          your mind and body, relieve stress, and enjoy luxurious moments.
+          with a uniquely customized experience.
         </p>
         <p className="font-serif">
           Treat yourself with our beauty and relaxing services and it's worth a
           try. We have promos to avail during holidays and special occasions to
           make sure you can have your personal time to relax. Give your family
-          and loved ones a day that they deserve. Set your appointment or
-          contact us for any questions! during holidays and special occasions to
-          make sure you can have your personal time to relax. Give your family
-          and loved ones a day that they deserve. Set your appointment or
-          contact us for any questions!
         </p>
       </div>
       <Divider />

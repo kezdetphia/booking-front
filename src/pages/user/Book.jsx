@@ -71,7 +71,9 @@ const Book = () => {
     const dayOfWeek = value.day();
     if (dayOfWeek === 0 || dayOfWeek === 6) {
       setSelectedDate(value.format("YYYY/MM/DD"));
-      messageApi.info("Weekends are not available for booking.");
+      messageApi.info(
+        `Weekends are not available for booking!😔 Please give me a call in advance to book! 🥰`
+      );
       return;
     }
 

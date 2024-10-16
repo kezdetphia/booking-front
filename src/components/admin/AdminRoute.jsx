@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 const AdminRoute = ({ children }) => {
   const { user } = useAuth();
-  console.log("is user???", user);
 
   if (!user) {
     // If the user is not logged in, redirect to the sign-in page

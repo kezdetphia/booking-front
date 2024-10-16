@@ -19,37 +19,82 @@ import AdminAllAppointments from "./pages/admin/AdminAllAppointments";
 import OnHoliday from "./pages/admin/OnHoliday";
 import { AppointmentDateProvider } from "./context/appointmentDateContext";
 import AppointmentConfirm from "./pages/user/AppointmentConfirm";
+import SingleAppointment from "./pages/SingleAppointment";
 
 const App = () => {
   return (
+    // <AuthContextProvider>
+    //   <AppointmentProvider>
+    //     <AppointmentDateProvider>
+    //       <Router>
+    //         <Routes>
+    //           {/* Public Routes */}
+    //           <Route
+    //             path="*"
+    //             element={
+    //               <UserLayoutComponent>
+    //                 <Routes>
+    //                   <Route path="/" element={<Home />} />
+    //                   <Route path="/book" element={<Book />} />
+    //                   <Route path="/signin" element={<SignIn />} />
+    //                   <Route path="/signup" element={<SignUp />} />
+    //                   <Route
+    //                     path="/appointment-confirm"
+    //                     element={<AppointmentConfirm />}
+    //                   />
+    //                 </Routes>
+    //               </UserLayoutComponent>
+    //             }
+    //           />
+
+    //           {/* Admin Routes */}
+    //           <Route
+    //             path="/admin/*"
+    //             element={
+    //               <AdminRoute>
+    //                 <AdminLayoutComponent />
+    //               </AdminRoute>
+    //             }
+    //           >
+    //             <Route index element={<AdminDailyAppointments />} />
+    //             <Route path="users" element={<AdminUsers />} />
+    //             {/* <Route path="user/:id" element={<UserDetails />} /> */}
+    //             <Route
+    //               path="all-appointments"
+    //               element={<AdminAllAppointments />}
+    //             />
+    //             <Route path="day-off" element={<OnHoliday />} />
+    //             <Route path="user/:id" element={<UserDetails />} />
+    //             <Route
+    //               path="one-appointment/:appointmentId"
+    //               element={<SingleAppointment />}
+    //             />
+    //           </Route>
+    //         </Routes>
+    //       </Router>
+    //     </AppointmentDateProvider>
+    //   </AppointmentProvider>
+    // </AuthContextProvider>
     <AuthContextProvider>
       <AppointmentProvider>
         <AppointmentDateProvider>
           <Router>
             <Routes>
               {/* Public Routes */}
-              <Route
-                path="*"
-                element={
-                  <UserLayoutComponent>
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/book" element={<Book />} />
-                      <Route path="/signin" element={<SignIn />} />
-                      <Route path="/signup" element={<SignUp />} />
-                      <Route
-                        path="/appointment-confirm"
-                        element={<AppointmentConfirm />}
-                      />
-                      {/* <Route path="/user/:id" element={<UserDetails />} /> */}
-                    </Routes>
-                  </UserLayoutComponent>
-                }
-              />
+              <Route path="/" element={<UserLayoutComponent />}>
+                <Route index element={<Home />} />
+                <Route path="book" element={<Book />} />
+                <Route path="signin" element={<SignIn />} />
+                <Route path="signup" element={<SignUp />} />
+                <Route
+                  path="appointment-confirm"
+                  element={<AppointmentConfirm />}
+                />
+              </Route>
 
               {/* Admin Routes */}
               <Route
-                path="/admin/*"
+                path="/admin"
                 element={
                   <AdminRoute>
                     <AdminLayoutComponent />
@@ -58,13 +103,16 @@ const App = () => {
               >
                 <Route index element={<AdminDailyAppointments />} />
                 <Route path="users" element={<AdminUsers />} />
-                {/* <Route path="user/:id" element={<UserDetails />} /> */}
+                <Route path="user/:id" element={<UserDetails />} />
                 <Route
                   path="all-appointments"
                   element={<AdminAllAppointments />}
                 />
                 <Route path="day-off" element={<OnHoliday />} />
-                <Route path="user/:id" element={<UserDetails />} />
+                <Route
+                  path="one-appointment/:appointmentId"
+                  element={<SingleAppointment />}
+                />
               </Route>
             </Routes>
           </Router>

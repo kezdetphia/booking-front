@@ -15,6 +15,8 @@ function AdminAppointments() {
     }
   }, [appointments]);
 
+  //TODO: this appointmetnDate needs to be fixed
+
   // Filter appointments to only include those that match the appointmentDate
   const filteredAppointments = appointments.filter(
     (appointment) => appointment.date === appointmentDate

@@ -174,6 +174,75 @@ export const AppointmentProvider = ({ children }) => {
     }
   };
 
+  const updateAppointment = async (appointmentId, editedAppointment) => {
+    console.log("Starting updateAppointment with ID:", appointmentId);
+    setLoading(true);
+    setError(null);
+
+    // Optimistically update the state
+    setAppointments((prev) =>
+      prev.map((app) =>
+        app._id === appointmentId ? { ...app, ...editedAppointment } : app
+      )
+    );
+    console.log("Optimistically updated appointment:", editedAppointment);
+
+    const authToken = localStorage.getItem("authToken");
+
+    if (!authToken) {
+      console.log("User not authenticated");
+      // Optionally revert the state here or handle it differently
+      setLoading(false);
+      return;
+    }
+
+    try {
+      console.log("Sending PATCH request to update appointment...");
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/admin/admineditappointment/${appointmentId}`, // Ensure the correct endpoint
+        {
+          method: "PATCH", // Use PATCH for updates
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({ appointmentId, ...editedAppointment }),
+        }
+      );
+
+      if (!res.ok) {
+        console.error("Server responded with an error:", res.status);
+        throw new Error("Server error in updateAppointment context");
+      }
+
+      const data = await res.json();
+      console.log("Received response from server:", data);
+
+      // Optionally replace the appointment with the updated data from the server
+      setAppointments((prev) =>
+        prev.map((app) =>
+          app._id === appointmentId ? data.updatedAppointment : app
+        )
+      );
+      console.log(
+        "Successfully updated appointment in state:",
+        data.updatedAppointment
+      );
+    } catch (err) {
+      console.error("Error while updating appointment in context:", err);
+
+      // If there's an error, revert the optimistic update
+      setAppointments((prev) =>
+        prev.map((app) =>
+          app._id === appointmentId ? { ...app, ...editedAppointment } : app
+        )
+      );
+    } finally {
+      setLoading(false);
+      console.log("Finished updateAppointment process");
+    }
+  };
+
   const disableDates = async (date, reason) => {
     const authToken = localStorage.getItem("authToken");
 
@@ -232,6 +301,7 @@ export const AppointmentProvider = ({ children }) => {
         error,
         disabledDates,
         disableDates,
+        updateAppointment,
       }}
     >
       {children}

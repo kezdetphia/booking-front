@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext";
+import useSendEmail from "../hooks/useSendEmail";
 
 const AppointmentContext = createContext();
 
@@ -11,6 +12,7 @@ export const AppointmentProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [disabledDates, setDisabledDates] = useState([]);
+  const { sendEmail } = useSendEmail();
 
   // Fetching appointments when the component mounts
   useEffect(() => {
@@ -104,6 +106,20 @@ export const AppointmentProvider = ({ children }) => {
       // Debugging: Log the current user and the new appointment
       console.log("Current user before update:", user);
       console.log("New appointment ID:", data.appointment._id);
+
+      // Send email notification
+      // try {
+      //   console.log("Attempting to send email...");
+      //   await sendEmail(
+      //     "fehermark88@gmail.com",
+      //     "new appointment",
+      //     "There's a new booking :)",
+      //     "<p>niceeee this is html</p>"
+      //   );
+      //   console.log("Email sent successfully");
+      // } catch (emailError) {
+      //   console.error("Error sending email:", emailError);
+      // }
 
       // Update the user's appointments array
       setUser((prevUser) => {

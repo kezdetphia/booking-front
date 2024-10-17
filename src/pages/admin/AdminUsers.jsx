@@ -62,29 +62,29 @@ const AdminUsers = () => {
         itemLayout="horizontal"
         dataSource={filteredUsers}
         renderItem={(user) => (
-          <Link
-            to={`/admin/user/${user?._id}`}
-            style={{ display: "block", textDecoration: "none" }}
+          <List.Item
+            actions={[
+              <div className="flex gap-5">
+                <a key="list-loadmore-email" href={`mailto:${user.email}`}>
+                  <MailTwoTone
+                    twoToneColor="#1890ff"
+                    style={{ fontSize: "25px" }}
+                  />
+                </a>
+                <a key="list-loadmore-call" href={`tel:${user.phoneNumber}`}>
+                  <PhoneTwoTone
+                    twoToneColor="#32CD32"
+                    style={{ fontSize: "28px" }}
+                  />
+                </a>
+              </div>,
+            ]}
           >
-            <List.Item
-              actions={[
-                <div className="flex gap-5">
-                  <a key="list-loadmore-email" href={`mailto:${user.email}`}>
-                    <MailTwoTone
-                      twoToneColor="#1890ff"
-                      style={{ fontSize: "25px" }}
-                    />
-                  </a>
-                  <a key="list-loadmore-call" href={`tel:${user.phoneNumber}`}>
-                    <PhoneTwoTone
-                      twoToneColor="#32CD32"
-                      style={{ fontSize: "28px" }}
-                    />
-                  </a>
-                </div>,
-              ]}
-            >
-              <Skeleton avatar title={false} loading={initLoading} active>
+            <Skeleton avatar title={false} loading={initLoading} active>
+              <Link
+                to={`/admin/user/${user?._id}`}
+                style={{ display: "block", textDecoration: "none" }}
+              >
                 <List.Item.Meta
                   avatar={
                     <Avatar style={{ backgroundColor: "#87d068" }}>
@@ -119,9 +119,9 @@ const AdminUsers = () => {
                     </div>
                   }
                 />
-              </Skeleton>
-            </List.Item>
-          </Link>
+              </Link>
+            </Skeleton>
+          </List.Item>
         )}
       />
     </div>

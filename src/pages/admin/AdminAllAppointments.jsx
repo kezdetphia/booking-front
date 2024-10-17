@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, List, Skeleton, Select, Input } from "antd";
+import { Avatar, List, Skeleton, Select, Input, Button } from "antd";
 import dayjs from "dayjs";
 import { useAppointmentContext } from "../../context/AppointmentContext";
 import { Link } from "react-router-dom";
@@ -99,7 +99,9 @@ function AdminAllAppointments() {
                 <List.Item
                   actions={[
                     <a key="list-loadmore-edit">Edit</a>,
-                    <a key="list-loadmore-more">Delete</a>,
+                    <Button type="primary" danger key="list-loadmore-more">
+                      Delete
+                    </Button>,
                   ]}
                 >
                   <Skeleton avatar title={false} loading={item.loading} active>

@@ -1,35 +1,42 @@
-// src/pages/user/UserDetails.jsx
-import { Divider, InputNumber, Tag } from "antd";
+import { Divider, InputNumber, Tag, Skeleton } from "antd";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 
 const UserDetails = () => {
   const [userDetails, setUserDetails] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState("today"); // State to track selected category
+  const [selectedCategory, setSelectedCategory] = useState("today");
   const { id } = useParams();
   const [userAppointmentLength, setUserAppointmentLength] = useState();
+  const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
     const fetchUser = async () => {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/users/getuser/${id}`
-      );
+      setLoading(true); // Start loading
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/users/getuser/${id}`
+        );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch user");
+        if (!response.ok) {
+          throw new Error("Failed to fetch user");
+        }
+
+        const data = await response.json();
+        setUserDetails(data);
+        setUserAppointmentLength(data?.usualAppointmentLength);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      } finally {
+        setLoading(false); // Stop loading
       }
-
-      const data = await response.json();
-      console.log(data);
-      setUserDetails(data);
-      setUserAppointmentLength(data?.usualAppointmentLength);
     };
 
     fetchUser();
   }, [id]);
 
   const today = dayjs().format("YYYY-MM-DD");
+
   const categorizeAppointments = (appointments) => {
     const past = [];
     const todayAppointments = [];
@@ -62,9 +69,9 @@ const UserDetails = () => {
           </p>
           <p className="text-center font-serif">Give them a call?</p>
           <a
-            className="text-center font-serif block" // Ensure it behaves like a block element
+            className="text-center font-serif block"
             href={`tel:${userDetails?.phoneNumber}`}
-            style={{ textAlign: "center" }} // Additional inline style for centering
+            style={{ textAlign: "center" }}
           >
             {userDetails?.phoneNumber}
           </a>
@@ -94,9 +101,9 @@ const UserDetails = () => {
             Authorization: `Bearer ${authToken}`,
           },
           body: JSON.stringify({
-            userId: id, // User ID being updated
-            updateField: "usualAppointmentLength", // Field to update
-            updateValue: userAppointmentLength, // New value for that field
+            userId: id,
+            updateField: "usualAppointmentLength",
+            updateValue: userAppointmentLength,
           }),
         }
       );
@@ -117,75 +124,79 @@ const UserDetails = () => {
 
   return (
     <div>
-      <Divider orientation="center">
-        <p className="font-serif text-2xl font-bold">{userDetails?.username}</p>
-      </Divider>
-      <div className="flex flex-row justify-between pt-4">
-        <p className="font-serif font-semibold ">Member since:</p>
-        <p className="font-serif ">{userDetails?.createdAt.slice(0, 10)}</p>
-      </div>
-      <Divider />
-      <div className="flex flex-row justify-between">
-        <p className="font-serif font-semibold ">Appointments so far:</p>
-        <p className="font-serif ">{userDetails?.appointments.length}</p>
-      </div>
-      <Divider />
-      <Divider />
-      <div className="flex flex-row justify-between">
-        <p className="font-serif font-semibold ">Usual apppointment length:</p>
-        {/* <p className="font-serif ">{userDetails?.usualAppointmentLength}</p> */}
-        <div className="flex gap-x-4 items-center ">
-          <InputNumber
-            min={0}
-            value={userAppointmentLength}
-            onChange={handleAppointmentLengthChange}
-            onBlur={handleBlur}
-            style={{ width: 100 }}
-          />
-          <p className="font-serif ">minutes</p>
+      <Skeleton loading={loading} active>
+        <Divider orientation="center">
+          <p className="font-serif text-2xl font-bold">
+            {userDetails?.username}
+          </p>
+        </Divider>
+        <div className="flex flex-row justify-between pt-4">
+          <p className="font-serif font-semibold ">Member since:</p>
+          <p className="font-serif ">{userDetails?.createdAt.slice(0, 10)}</p>
         </div>
-      </div>
-      <Divider />
+        <Divider />
+        <div className="flex flex-row justify-between">
+          <p className="font-serif font-semibold ">Appointments so far:</p>
+          <p className="font-serif ">{userDetails?.appointments.length}</p>
+        </div>
+        <Divider />
+        <div className="flex flex-row justify-between">
+          <p className="font-serif font-semibold ">Usual appointment length:</p>
+          <div className="flex gap-x-4 items-center ">
+            <InputNumber
+              min={0}
+              value={userAppointmentLength}
+              onChange={handleAppointmentLengthChange}
+              onBlur={handleBlur}
+              style={{ width: 100 }}
+            />
+            <p className="font-serif ">minutes</p>
+          </div>
+        </div>
+        <Divider />
 
-      <div className="flex justify-around pb-2">
-        <Tag
-          color={selectedCategory === "past" ? "volcano" : "red"}
-          onClick={() => setSelectedCategory("past")}
-          style={{
-            cursor: "pointer",
-            border: selectedCategory === "past" ? "1px solid #fa541c" : "none",
-          }}
-        >
-          Past: {past.length}
-        </Tag>
-        <Tag
-          color={selectedCategory === "today" ? "geekblue" : "blue"}
-          onClick={() => setSelectedCategory("today")}
-          style={{
-            cursor: "pointer",
-            border: selectedCategory === "today" ? "1px solid #2f54eb" : "none",
-          }}
-        >
-          Today: {todayAppointments.length}
-        </Tag>
-        <Tag
-          color={selectedCategory === "future" ? "lime" : "green"}
-          onClick={() => setSelectedCategory("future")}
-          style={{
-            cursor: "pointer",
-            border:
-              selectedCategory === "future" ? "1px solid #52c41a" : "none",
-          }}
-        >
-          Future: {future.length}
-        </Tag>
-      </div>
+        <div className="flex justify-around pb-2">
+          <Tag
+            color={selectedCategory === "past" ? "volcano" : "red"}
+            onClick={() => setSelectedCategory("past")}
+            style={{
+              cursor: "pointer",
+              border:
+                selectedCategory === "past" ? "1px solid #fa541c" : "none",
+            }}
+          >
+            Past: {past.length}
+          </Tag>
+          <Tag
+            color={selectedCategory === "today" ? "geekblue" : "blue"}
+            onClick={() => setSelectedCategory("today")}
+            style={{
+              cursor: "pointer",
+              border:
+                selectedCategory === "today" ? "1px solid #2f54eb" : "none",
+            }}
+          >
+            Today: {todayAppointments.length}
+          </Tag>
+          <Tag
+            color={selectedCategory === "future" ? "lime" : "green"}
+            onClick={() => setSelectedCategory("future")}
+            style={{
+              cursor: "pointer",
+              border:
+                selectedCategory === "future" ? "1px solid #52c41a" : "none",
+            }}
+          >
+            Future: {future.length}
+          </Tag>
+        </div>
 
-      <Divider />
+        <Divider />
 
-      {selectedCategory === "past" && renderAppointments(past)}
-      {selectedCategory === "today" && renderAppointments(todayAppointments)}
-      {selectedCategory === "future" && renderAppointments(future)}
+        {selectedCategory === "past" && renderAppointments(past)}
+        {selectedCategory === "today" && renderAppointments(todayAppointments)}
+        {selectedCategory === "future" && renderAppointments(future)}
+      </Skeleton>
     </div>
   );
 };

@@ -30,7 +30,7 @@ const useSendEmail = () => {
       const data = await response.json();
       setSuccess(data.message);
     } catch (err) {
-      setError(err.message);
+      setError("error in backend", err.message);
     } finally {
       setLoading(false);
     }

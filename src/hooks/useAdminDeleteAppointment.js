@@ -25,7 +25,6 @@ const useAdminDeleteAppointment = () => {
       if (!response.ok) {
         throw new Error("Failed to delete appointment");
       }
-      console.log("Appointment deleted", appointmentId);
     } catch (err) {
       setError(err.message);
     } finally {

@@ -16,9 +16,14 @@ export const AppointmentProvider = ({ children }) => {
 
   // Fetching appointments when the component mounts
   useEffect(() => {
-    getAppointments();
-    getDisabledDates();
-  }, []);
+    const authToken = localStorage.getItem("authToken");
+    if (authToken) {
+      getAppointments();
+      getDisabledDates();
+    } else {
+      console.log("token is not available yet to fetch the data");
+    }
+  }, [user]);
 
   //Fetch all appointments from db
   const getAppointments = async () => {
@@ -92,7 +97,7 @@ export const AppointmentProvider = ({ children }) => {
       }
 
       const data = await res.json();
-      console.log("Received response from server:", data);
+      const appointment = data.appointment;
 
       // Replace the temporary appointment with the one from the server
       setAppointments((prev) =>
@@ -103,23 +108,23 @@ export const AppointmentProvider = ({ children }) => {
         data.appointment
       );
 
-      // Debugging: Log the current user and the new appointment
-      console.log("Current user before update:", user);
-      console.log("New appointment ID:", data.appointment._id);
-
       // Send email notification
-      // try {
-      //   console.log("Attempting to send email...");
-      //   await sendEmail(
-      //     "fehermark88@gmail.com",
-      //     "new appointment",
-      //     "There's a new booking :)",
-      //     "<p>niceeee this is html</p>"
-      //   );
-      //   console.log("Email sent successfully");
-      // } catch (emailError) {
-      //   console.error("Error sending email:", emailError);
-      // }
+      try {
+        console.log("Attempting to send email...");
+        await sendEmail(
+          user?.email,
+          "new appointment",
+          "There's a new booking",
+          `<h3>Thanks for booking the appointment</h3>
+          I'll see you on ${appointment.date} at ${appointment.time}.
+          It will take about ${appointment.length}
+          Your notes: ${appointment.desc}
+          `
+        );
+        console.log("Email sent successfully");
+      } catch (emailError) {
+        console.error("Error sending email:", emailError);
+      }
 
       // Update the user's appointments array
       setUser((prevUser) => {
@@ -130,7 +135,6 @@ export const AppointmentProvider = ({ children }) => {
             data.appointment._id,
           ],
         };
-        console.log("Updated user:", updatedUser);
         return updatedUser;
       });
 
@@ -146,7 +150,6 @@ export const AppointmentProvider = ({ children }) => {
   };
 
   const deleteAppointment = async (appointmentId) => {
-    console.log("deleteAppointment in context", appointmentId);
     setLoading(true);
     setError(null);
     const authToken = localStorage.getItem("authToken");
@@ -278,7 +281,6 @@ export const AppointmentProvider = ({ children }) => {
       if (!res.ok) throw new Error("Server error in disableDates context");
 
       const data = await res.json();
-      console.log("Dates disabled:", data);
       setDisabledDates((prev) => [...prev, data.disabledDates]);
     } catch (err) {
       console.log("Error while disabling dates in context:", err);

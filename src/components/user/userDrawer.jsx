@@ -1,5 +1,5 @@
 // src/components/UserDrawer.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { Button, Divider, Drawer, Avatar, List } from "antd";
 import { Link } from "react-router-dom";
@@ -7,11 +7,51 @@ import { useAppointmentContext } from "../../context/AppointmentContext";
 
 function UserDrawer({ drawerOpen, onClose, handleLogout }) {
   const { user } = useAuth();
-  const { appointments } = useAppointmentContext();
+  const [userAppointments, setUserAppointments] = useState([]);
   const [childrenDrawer, setChildrenDrawer] = useState(false);
   const [selectedContent, setSelectedContent] = useState("");
+  const userId = user?._id;
+  const authToken = localStorage.getItem("authToken");
 
-  const categorizeAppointments = (appointments) => {
+  useEffect(() => {
+    const getUserAppointments = async () => {
+      // Make sure both authToken and userId are available
+      if (!authToken || !userId) {
+        console.log("Waiting for user ID and auth token...");
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/users/getuserappointments/${userId}`,
+          {
+            method: "GET", // Set method type
+            headers: {
+              "Content-Type": "application/json", // Specify JSON content
+              Authorization: `Bearer ${authToken}`, // Add Bearer token
+            },
+          }
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          const appointments = data?.appointments;
+          setUserAppointments(appointments); // Set fetched appointments
+        } else {
+          console.log("Failed to fetch appointments: ", res.status);
+        }
+      } catch (error) {
+        console.error("Error fetching appointments: ", error);
+      }
+    };
+
+    // Trigger fetch only when both authToken and userId are available
+    if (authToken && userId) {
+      getUserAppointments();
+    }
+  }, [authToken, userId]);
+
+  const categorizeAppointments = (userAppointments) => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -19,7 +59,7 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
     const todayAppointments = [];
     const future = [];
 
-    appointments.forEach((appointment) => {
+    userAppointments.forEach((appointment) => {
       const appointmentDate = new Date(appointment.date);
       const appointmentDateTime = new Date(
         `${appointment.date}T${appointment.time}`
@@ -38,7 +78,7 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
   };
 
   const { today: todayAppointments, future } =
-    categorizeAppointments(appointments);
+    categorizeAppointments(userAppointments);
 
   const personalData = [user?.username, user?.email];
 
@@ -139,7 +179,7 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
             ) : (
               <div>
                 <p className="text-center text-xl font-semibold font-serif">
-                  No future appointments.
+                  No future userAppointments.
                 </p>
                 <div className="flex justify-center pt-5">
                   <Link to="/book" onClick={onChildrenDrawerClose}>

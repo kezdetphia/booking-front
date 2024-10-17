@@ -28,7 +28,8 @@ dayjs.extend(isSameOrBefore); // Extend dayjs with the plugin
 
 const Book = () => {
   const { user } = useAuth();
-  const { postAppointment, appointments, disabledDates } =
+  const { postAppointment, disabledDates } =
+    // const { postAppointment, appointments, disabledDates } =
     useAppointmentContext();
   const [modalOpen, setModalOpen] = useState(false);
   const { token } = theme.useToken();
@@ -39,8 +40,6 @@ const Book = () => {
 
   const currentYear = dayjs().year(); // Get the current year
   const currentMonth = dayjs().month(); // Get the current month (0-indexed)
-
-  console.log("user in book page", user);
 
   const disabledDate = (current) => {
     if (!current) return false;
@@ -124,7 +123,7 @@ const Book = () => {
           <AppointmentModal
             modalOpen={modalOpen}
             setModalOpen={setModalOpen}
-            appointments={appointments}
+            // appointments={appointments}
             submitAppointment={submitAppointment}
           />
           <Calendar

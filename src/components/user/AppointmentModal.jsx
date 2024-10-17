@@ -8,7 +8,7 @@ import { useAppointmentDateContext } from "../../context/appointmentDateContext"
 const AppointmentModal = ({
   setModalOpen,
   modalOpen,
-  appointments,
+  // appointments,
   submitAppointment,
 }) => {
   const { selectedTime, selectedDate } = useAppointmentDateContext();
@@ -24,8 +24,6 @@ const AppointmentModal = ({
 
   const onOk = () => {
     setShowConfirmModal(true); // Open the PopUpModal
-    console.log("Show Confirm Modal:", showConfirmModal); // Debugging line
-
     setModalOpen(false);
 
     // if (confirmSubmit === true) {
@@ -65,7 +63,8 @@ const AppointmentModal = ({
           </Space>
         }
       >
-        <DayCalendar isInteractive={true} appointments={appointments} />
+        {/* <DayCalendar isInteractive={true} appointments={appointments} /> */}
+        <DayCalendar isInteractive={true} />
       </Drawer>
       <PopUpModal
         visible={showConfirmModal}

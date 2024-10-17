@@ -7,8 +7,6 @@ export const AuthContextProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(undefined);
   const [authLoading, setAuthLoading] = useState(true);
 
-  console.log("authcontext run", user);
-
   useEffect(() => {
     const setUserAuthenticated = async () => {
       const token = localStorage.getItem("authToken");

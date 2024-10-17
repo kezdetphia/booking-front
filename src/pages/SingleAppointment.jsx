@@ -50,8 +50,12 @@ const SingleAppointment = () => {
   }, [appointmentId]);
 
   const handleEditAppointment = async () => {
+    if (isEditing) {
+      // If saving changes
+      await updateAppointment(appointment._id, editedAppointment);
+      setAppointment(editedAppointment); // Update local state after submission
+    }
     setIsEditing(!isEditing); // Toggle edit mode
-    await updateAppointment(appointment._id, editedAppointment);
   };
 
   const handleInputChange = (field, value) => {
@@ -71,8 +75,6 @@ const SingleAppointment = () => {
   };
 
   const lengthOptions = generateLengthOptions();
-
-  console.log("edited appointment", editedAppointment);
 
   // Fields to display and edit
   const fieldsToRender = ["date", "time", "length", "description"];
@@ -103,13 +105,7 @@ const SingleAppointment = () => {
                     : ""}
                 </span>
               ) : key === "length" ? (
-                <span>
-                  {appointment
-                    ? `${Math.floor(appointment.length / 60)}h ${
-                        appointment.length % 60
-                      }m`
-                    : ""}
-                </span>
+                <span>{appointment ? appointment.length : ""}</span>
               ) : (
                 <span>{appointment ? appointment.description : ""}</span>
               )

@@ -75,7 +75,6 @@ const SignUp = () => {
         content: "User registered successfully!",
       });
 
-      console.log("User registered successfully:", data);
       // Optionally redirect the user after successful registration
       navigate("/signin");
     } catch (error) {

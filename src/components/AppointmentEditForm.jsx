@@ -62,7 +62,6 @@ const AppointmentEditForm = ({ appointment }) => {
     };
 
     submitEditData(dataToSubmit);
-    console.log("Data to submit", dataToSubmit);
   };
 
   const submitEditData = async (dataToSubmit) => {
@@ -87,8 +86,6 @@ const AppointmentEditForm = ({ appointment }) => {
         throw new Error("Something went wrong");
       }
       const data = await res.json();
-
-      console.log(data);
     } catch (err) {
       console.log("Server error", err);
     }

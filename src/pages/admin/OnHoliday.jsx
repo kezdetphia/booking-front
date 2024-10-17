@@ -8,8 +8,6 @@ const OnHoliday = () => {
   const { disableDates } = useAppointmentContext();
   const [form] = Form.useForm();
 
-  console.log("OnHoliday");
-
   const onFinish = (values) => {
     if (!values.date1 || !values.date2) {
       message.error("Please select both start and end dates.");

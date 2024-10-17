@@ -1,5 +1,5 @@
 // src/pages/user/UserDetails.jsx
-import { Divider, Tag } from "antd";
+import { Divider, InputNumber, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
@@ -8,6 +8,7 @@ const UserDetails = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("today"); // State to track selected category
   const { id } = useParams();
+  const [userAppointmentLength, setUserAppointmentLength] = useState();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -22,15 +23,13 @@ const UserDetails = () => {
       const data = await response.json();
       console.log(data);
       setUserDetails(data);
+      setUserAppointmentLength(data?.usualAppointmentLength);
     };
 
     fetchUser();
   }, [id]);
 
-  console.log("userDetails", userDetails);
-
   const today = dayjs().format("YYYY-MM-DD");
-
   const categorizeAppointments = (appointments) => {
     const past = [];
     const todayAppointments = [];
@@ -83,6 +82,39 @@ const UserDetails = () => {
     ));
   };
 
+  const handleBlur = async () => {
+    const authToken = localStorage.getItem("authToken");
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/admin/adminedituserdetails`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({
+            userId: id, // User ID being updated
+            updateField: "usualAppointmentLength", // Field to update
+            updateValue: userAppointmentLength, // New value for that field
+          }),
+        }
+      );
+      if (!res.ok) {
+        throw new Error("Failed to update user details");
+      }
+
+      const data = await res.json();
+      console.log("User details updated successfully:", data);
+    } catch (err) {
+      console.error("Error updating user details:", err);
+    }
+  };
+
+  const handleAppointmentLengthChange = (value) => {
+    setUserAppointmentLength(value);
+  };
+
   return (
     <div>
       <Divider orientation="center">
@@ -96,6 +128,22 @@ const UserDetails = () => {
       <div className="flex flex-row justify-between">
         <p className="font-serif font-semibold ">Appointments so far:</p>
         <p className="font-serif ">{userDetails?.appointments.length}</p>
+      </div>
+      <Divider />
+      <Divider />
+      <div className="flex flex-row justify-between">
+        <p className="font-serif font-semibold ">Usual apppointment length:</p>
+        {/* <p className="font-serif ">{userDetails?.usualAppointmentLength}</p> */}
+        <div className="flex gap-x-4 items-center ">
+          <InputNumber
+            min={0}
+            value={userAppointmentLength}
+            onChange={handleAppointmentLengthChange}
+            onBlur={handleBlur}
+            style={{ width: 100 }}
+          />
+          <p className="font-serif ">minutes</p>
+        </div>
       </div>
       <Divider />
 

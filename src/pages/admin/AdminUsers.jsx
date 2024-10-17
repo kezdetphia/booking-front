@@ -83,7 +83,12 @@ const AdminUsers = () => {
             <Skeleton avatar title={false} loading={initLoading} active>
               <Link
                 to={`/admin/user/${user?._id}`}
-                style={{ display: "block", textDecoration: "none" }}
+                style={{
+                  display: "flex",
+                  textDecoration: "none",
+                  width: "100%", // Ensure it takes full width of the item
+                  alignItems: "flex-start", // Align items to the start
+                }}
               >
                 <List.Item.Meta
                   avatar={

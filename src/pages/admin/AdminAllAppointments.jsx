@@ -13,7 +13,7 @@ function AdminAllAppointments() {
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { appointments } = useAppointmentContext();
+  const { appointments, deleteAppointment } = useAppointmentContext();
 
   useEffect(() => {
     setInitLoading(false);
@@ -29,6 +29,10 @@ function AdminAllAppointments() {
     const value = e.target.value;
     setSearchTerm(value);
     filterAppointments(filter, value);
+  };
+
+  const handleDeleteAppointment = async (appointmentId) => {
+    await deleteAppointment(appointmentId);
   };
 
   const filterAppointments = (filter, searchTerm) => {
@@ -96,38 +100,69 @@ function AdminAllAppointments() {
               itemLayout="horizontal"
               dataSource={list}
               renderItem={(item) => (
-                <List.Item
-                  actions={[
-                    <a key="list-loadmore-edit">Edit</a>,
-                    <Button type="primary" danger key="list-loadmore-more">
-                      Delete
-                    </Button>,
-                  ]}
-                >
+                <List.Item>
                   <Skeleton avatar title={false} loading={item.loading} active>
-                    <Link to={`/admin/one-appointment/${item._id}`}>
-                      <List.Item.Meta
-                        avatar={
-                          <Avatar
-                            style={{
-                              backgroundColor: "#FFDAB9", // Peach background
-                              color: "#FFFFFF", // White text
-                            }}
-                          >
-                            {item.username
-                              ? item.username.charAt(0).toUpperCase()
-                              : "?"}
-                          </Avatar>
-                        }
-                        title={<p>{item.username}</p>}
-                        description={
-                          <div>
-                            <div>{item.desc.slice(0, 20)}...</div>
-                            <div>{`${item.date} at ${item.time}`}</div>
-                          </div>
-                        }
-                      />
-                    </Link>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%",
+                      }}
+                    >
+                      <Link
+                        to={`/admin/one-appointment/${item._id}`}
+                        style={{
+                          display: "flex",
+                          textDecoration: "none",
+                          alignItems: "flex-start",
+                          flex: 1, // Allow the link to take available space
+                        }}
+                      >
+                        <List.Item.Meta
+                          avatar={
+                            <Avatar
+                              style={{
+                                backgroundColor: "#FFDAB9", // Peach background
+                                color: "#FFFFFF", // White text
+                              }}
+                            >
+                              {item.username
+                                ? item.username.charAt(0).toUpperCase()
+                                : "?"}
+                            </Avatar>
+                          }
+                          title={
+                            <p className="font-semibold text-black">
+                              {item.username}
+                            </p>
+                          }
+                          description={
+                            <div className=" flex flex-col justify-center">
+                              <div>{item.desc.slice(0, 20)}...</div>
+                              <div>
+                                <p className="font-semibold text-black">{`${item.date} at ${item.time}`}</p>
+                              </div>
+                            </div>
+                          }
+                        />
+                      </Link>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginLeft: "10px",
+                        }}
+                      >
+                        <Button
+                          onClick={() => handleDeleteAppointment(item._id)}
+                          type="primary"
+                          danger
+                          key="list-loadmore-more"
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
                   </Skeleton>
                 </List.Item>
               )}

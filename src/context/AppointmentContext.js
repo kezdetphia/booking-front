@@ -1,6 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext";
 import useSendEmail from "../hooks/useSendEmail";
+import {
+  AppointmentCancelledEmail,
+  AppointmentConfirmEmail,
+  AppointmentChangedEmail,
+} from "../utils/AppointmentEmails";
 
 const AppointmentContext = createContext();
 
@@ -115,11 +120,7 @@ export const AppointmentProvider = ({ children }) => {
           user?.email,
           "new appointment",
           "There's a new booking",
-          `<h3>Thanks for booking the appointment</h3>
-          I'll see you on ${appointment.date} at ${appointment.time}.
-          It will take about ${appointment.length}
-          Your notes: ${appointment.desc}
-          `
+          AppointmentConfirmEmail(data?.appointment)
         );
         console.log("Email sent successfully");
       } catch (emailError) {
@@ -180,6 +181,7 @@ export const AppointmentProvider = ({ children }) => {
       console.log("Appointment deleted from state:", appointmentId);
 
       const data = await res.json();
+
       console.log("Appointment deleted from db:", data);
 
       // Update the user's appointments array on the server
@@ -188,6 +190,25 @@ export const AppointmentProvider = ({ children }) => {
         appointments: user.appointments.filter((id) => id !== appointmentId),
       };
       setUser(updatedUser);
+
+      // Send email notification
+      try {
+        console.log("Attempting to send email from updateappointments");
+        await sendEmail(
+          user?.email,
+          "Your apppontment was cancelled!",
+          "Appointment Deleted",
+          AppointmentCancelledEmail(data?.appointment)
+          // `<h3>We are so sorry, but we had to cancel your appointment. Please give us a call to reschedule.</h3>
+          // ${data?.appointment?.date} at ${data?.appointment?.time}.
+
+          // Your notes: ${data?.appointment?.desc}
+          // `
+        );
+        console.log("Email sent successfully");
+      } catch (emailError) {
+        console.error("Error sending email:", emailError);
+      }
     } catch (err) {
       console.log("Error while deleting appointment in context:", err);
     }
@@ -247,6 +268,22 @@ export const AppointmentProvider = ({ children }) => {
         "Successfully updated appointment in state:",
         data.updatedAppointment
       );
+
+      try {
+        console.log("Attempting to send email from updateappointments");
+        await sendEmail(
+          user?.email,
+          "Your apppontment was changed!",
+          "Appointment Changed",
+          AppointmentChangedEmail(
+            data?.updatedAppointment,
+            data?.oldAppointment
+          )
+        );
+        console.log("Email sent successfully");
+      } catch (emailError) {
+        console.error("Error sending email:", emailError);
+      }
     } catch (err) {
       console.error("Error while updating appointment in context:", err);
 

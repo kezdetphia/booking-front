@@ -111,7 +111,7 @@ const AdminLayoutComponent = () => {
                   {item.label}
                 </p>
               ))}
-              <Dropdown overlay={otherDaysMenu} trigger={["click"]}>
+              <Dropdown menu={otherDaysMenu} trigger={["click"]}>
                 <p
                   className="cursor-pointer"
                   style={{

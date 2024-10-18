@@ -102,7 +102,6 @@ export const AppointmentProvider = ({ children }) => {
       }
 
       const data = await res.json();
-      const appointment = data.appointment;
 
       // Replace the temporary appointment with the one from the server
       setAppointments((prev) =>

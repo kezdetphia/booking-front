@@ -33,22 +33,10 @@ const Home = () => {
         <div className="w-full  sm:w-[600px] sm:full   ">
           <Carousel autoplay>
             <div className="w-full h-full">
-              <Image
-                // width="100%"
-                // height={500}
-                // maxWidth={100}
-                // className="w-full h-full object-cover" // Full width and height, cover the carousel
-                src={color1}
-              />
+              <Image src={color1} />
             </div>
             <div className="w-full h-full">
-              <Image
-                // width="100%"
-                // height={500}
-                // maxWidth={100}
-                // className="w-full h-full object-cover" // Full width and height, cover the carousel
-                src={color}
-              />
+              <Image src={color} />
             </div>
           </Carousel>
         </div>

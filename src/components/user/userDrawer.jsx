@@ -3,8 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { Button, Divider, Drawer, Avatar, List } from "antd";
 import { Link } from "react-router-dom";
-import { useAppointmentContext } from "../../context/AppointmentContext";
+// import { useAppointmentContext } from "../../context/AppointmentContext";
 
+//TODO: Need to sort out fetching, if i book an appointment it does not show up in the appointments list only if i refresh the page
 function UserDrawer({ drawerOpen, onClose, handleLogout }) {
   const { user } = useAuth();
   const [userAppointments, setUserAppointments] = useState([]);

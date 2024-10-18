@@ -62,69 +62,76 @@ const AdminUsers = () => {
         itemLayout="horizontal"
         dataSource={filteredUsers}
         renderItem={(user) => (
-          <List.Item
-            actions={[
-              <div className="flex gap-5">
-                <a key="list-loadmore-email" href={`mailto:${user.email}`}>
-                  <MailTwoTone
-                    twoToneColor="#1890ff"
-                    style={{ fontSize: "25px" }}
-                  />
-                </a>
-                <a key="list-loadmore-call" href={`tel:${user.phoneNumber}`}>
-                  <PhoneTwoTone
-                    twoToneColor="#32CD32"
-                    style={{ fontSize: "28px" }}
-                  />
-                </a>
-              </div>,
-            ]}
-          >
+          <List.Item>
             <Skeleton avatar title={false} loading={initLoading} active>
-              <Link
-                to={`/admin/user/${user?._id}`}
+              <div
                 style={{
                   display: "flex",
-                  textDecoration: "none",
-                  width: "100%", // Ensure it takes full width of the item
-                  alignItems: "flex-start", // Align items to the start
+                  justifyContent: "space-between",
+                  width: "100%",
                 }}
               >
-                <List.Item.Meta
-                  avatar={
-                    <Avatar style={{ backgroundColor: "#87d068" }}>
-                      {user.username
-                        ? user.username.charAt(0).toUpperCase()
-                        : "?"}
-                    </Avatar>
-                  }
-                  title={
-                    <p className="font-serif font-semibold">{user.username}</p>
-                  }
-                  description={
-                    <div>
+                <Link
+                  to={`/admin/user/${user?._id}`}
+                  style={{
+                    display: "flex",
+                    textDecoration: "none",
+                    width: "100%",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <List.Item.Meta
+                    avatar={
+                      <Avatar style={{ backgroundColor: "#87d068" }}>
+                        {user.username
+                          ? user.username.charAt(0).toUpperCase()
+                          : "?"}
+                      </Avatar>
+                    }
+                    title={
+                      <p className="font-serif font-semibold">
+                        {user.username}
+                      </p>
+                    }
+                    description={
                       <div>
-                        <span>Email: </span>
-                        <span>{user.email}</span>
+                        <div>
+                          <span>Email: </span>
+                          <span>{user.email}</span>
+                        </div>
+                        <div>
+                          <span>Number: </span>
+                          <span>{user.phoneNumber}</span>
+                        </div>
+                        <div>
+                          <span>Registered: </span>
+                          <span>
+                            {new Date(user.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div>
+                          <span>Appointments: </span>
+                          <span>{user.appointments?.length || 0}</span>
+                        </div>
                       </div>
-                      <div>
-                        <span>Number: </span>
-                        <span>{user.phoneNumber}</span>
-                      </div>
-                      <div>
-                        <span>Registered: </span>
-                        <span>
-                          {new Date(user.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <div>
-                        <span>Appointments: </span>
-                        <span>{user.appointments?.length || 0}</span>
-                      </div>
-                    </div>
-                  }
-                />
-              </Link>
+                    }
+                  />
+                </Link>
+                <div className="flex gap-5 items-center justify-center">
+                  <a key="list-loadmore-email" href={`mailto:${user.email}`}>
+                    <MailTwoTone
+                      twoToneColor="#1890ff"
+                      style={{ fontSize: "25px" }}
+                    />
+                  </a>
+                  <a key="list-loadmore-call" href={`tel:${user.phoneNumber}`}>
+                    <PhoneTwoTone
+                      twoToneColor="#32CD32"
+                      style={{ fontSize: "28px" }}
+                    />
+                  </a>
+                </div>
+              </div>
             </Skeleton>
           </List.Item>
         )}

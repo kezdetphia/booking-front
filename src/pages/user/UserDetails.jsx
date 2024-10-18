@@ -1,6 +1,6 @@
 import { Divider, InputNumber, Tag, Skeleton } from "antd";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import dayjs from "dayjs";
 
 const UserDetails = () => {
@@ -80,12 +80,14 @@ const UserDetails = () => {
     }
 
     return appointments.map((appointment) => (
-      <div key={appointment._id}>
-        <p>Date: {appointment.date}</p>
-        <p>Time: {appointment.time}</p>
-        <p>Description: {appointment.desc || "No description"}</p>
-        <Divider />
-      </div>
+      <Link to={`/admin/one-appointment/${appointment?._id}`}>
+        <div key={appointment._id}>
+          <p>Date: {appointment.date}</p>
+          <p>Time: {appointment.time}</p>
+          <p>Description: {appointment.desc || "No description"}</p>
+          <Divider />
+        </div>
+      </Link>
     ));
   };
 

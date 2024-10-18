@@ -46,7 +46,7 @@ const AppointmentConfirmEmail = (appointmentData) => {
 <body>
   <div class="container">
     <h3>Appointment Confirmed!</h3>
-    <p>Hi ${username}, Thank you for scheduling your appointment with us. We're excited to see you!</p>
+    <p>Hi ${username}, Thank you for scheduling your appointment with us. We're excited to see you! </p>
     
     <div class="appointment-details">
       <p><strong>Appointment Date & Time:</strong> ${date} at ${time}</p>
@@ -54,7 +54,7 @@ const AppointmentConfirmEmail = (appointmentData) => {
       <p><strong>Your Notes:</strong> ${desc}</p>
     </div>
     
-    <p>If you have any questions or need to reschedule, please <a href="tel:+1234567890" class="call-link">give us a call on +1234567890</a>.</p>
+    <p>If you have any questions or need to reschedule, please give us a call on <a href="tel:+1234567890" class="call-link"> +1234567890</a>.</p>
     
     <div class="footer">
       <p>Looking forward to seeing you,</p>
@@ -121,7 +121,7 @@ const AppointmentCancelledEmail = (appointmentData) => {
           <p><strong>Appointment Date & Time:</strong> ${date} at ${time}</p>
           <p><strong>Your Notes:</strong> ${desc}</p>
         </div>
-        <p>If you have any questions or would like to reschedule, please don't hesitate to <a href="tel:+1234567890" class="call-link">give us a call on +1234567890</a>.</p>
+        <p>If you have any questions or would like to reschedule, please don't hesitate t give us a call on <a href="tel:+1234567890" class="call-link">+1234567890</a>.</p>
         <div class="footer">
           <p>Kind Regards,</p>
           <p>Whatever Company</p>
@@ -199,7 +199,7 @@ const AppointmentChangedEmail = (appointmentData, oldAppointmentData) => {
       <p><strong>Your Notes:</strong> ${oldDesc}</p>
     </div>
     
-    <p>If you have any questions or need to reschedule, please <a href="tel:+1234567890" class="call-link">give us a call on +1234567890 </a>.</p>
+    <p>If you have any questions or need to reschedule, pleas give us a call on <a href="tel:+1234567890" class="call-link">+1234567890 </a>.</p>
     
     <div class="footer">
       <p>Looking forward to seeing you,</p>

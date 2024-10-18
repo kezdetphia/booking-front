@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, List, Skeleton, Select, Input, Button } from "antd";
+import {
+  Avatar,
+  List,
+  Skeleton,
+  Select,
+  Input,
+  Button,
+  Popconfirm,
+  message,
+} from "antd";
 import dayjs from "dayjs";
 import { useAppointmentContext } from "../../context/AppointmentContext";
 import { Link } from "react-router-dom";
@@ -29,10 +38,6 @@ function AdminAllAppointments() {
     const value = e.target.value;
     setSearchTerm(value);
     filterAppointments(filter, value);
-  };
-
-  const handleDeleteAppointment = async (appointmentId) => {
-    await deleteAppointment(appointmentId);
   };
 
   const filterAppointments = (filter, searchTerm) => {
@@ -66,6 +71,12 @@ function AdminAllAppointments() {
     });
 
     setList(filteredAppointments);
+  };
+
+  const handleDelete = async (e, appId) => {
+    e.stopPropagation(); // Prevent triggering the parent click event
+    await deleteAppointment(appId);
+    message.success("Appointment deleted successfully");
   };
 
   return (
@@ -153,14 +164,29 @@ function AdminAllAppointments() {
                           marginLeft: "10px",
                         }}
                       >
-                        <Button
+                        <Popconfirm
+                          title={<p className="font-serif">Delete the task</p>}
+                          description={
+                            <p className="font-serif">
+                              Are you sure to delete this task?
+                            </p>
+                          }
+                          onConfirm={(e) => handleDelete(e, item._id)}
+                          okText={<p className="font-serif">Yes</p>}
+                          cancelText={<p className="font-serif">No</p>}
+                        >
+                          <Button type="primary" danger>
+                            <p className="font-serif">Delete</p>
+                          </Button>
+                        </Popconfirm>
+                        {/* <Button
                           onClick={() => handleDeleteAppointment(item._id)}
                           type="primary"
                           danger
                           key="list-loadmore-more"
                         >
                           Delete
-                        </Button>
+                        </Button> */}
                       </div>
                     </div>
                   </Skeleton>

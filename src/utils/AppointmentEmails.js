@@ -136,7 +136,14 @@ export { AppointmentCancelledEmail };
 
 const AppointmentChangedEmail = (appointmentData, oldAppointmentData) => {
   const { date, time, desc, username, length } = appointmentData;
-  const { oldDate, oldTime, oldDesc, oldLength } = oldAppointmentData;
+  const {
+    date: oldDate,
+    time: oldTime,
+    desc: oldDesc,
+    length: oldLength,
+  } = oldAppointmentData || {};
+  console.log("email appointmentData", appointmentData);
+  console.log("email oldAppointmentData", oldAppointmentData);
 
   return ` 
   <!DOCTYPE html>

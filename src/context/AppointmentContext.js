@@ -303,6 +303,8 @@ export const AppointmentProvider = ({ children }) => {
 
       const data = await res.json();
       console.log("Received response from server:", data);
+      const oldData = data.oldAppointment;
+      console.log("old data from api", oldData);
 
       // Optionally replace the appointment with the updated data from the server
       setAppointments((prev) =>

@@ -16,8 +16,7 @@ import { useAppointmentContext } from "../context/AppointmentContext";
 
 const SingleAppointment = () => {
   const [appointment, setAppointment] = useState(null);
-  const [isEditing, setIsEditing] = useState(false); // Edit mode state
-  const [editedAppointment, setEditedAppointment] = useState({}); // To store edited values
+  const [editedAppointment, setEditedAppointment] = useState({}); // Store edited values
   const [loading, setLoading] = useState(true); // Loading state
   const { appointmentId } = useParams();
   const { updateAppointment } = useAppointmentContext();
@@ -53,13 +52,9 @@ const SingleAppointment = () => {
     fetchAppointment();
   }, [appointmentId]);
 
-  const handleEditAppointment = async () => {
-    if (isEditing) {
-      // If saving changes
-      await updateAppointment(appointment._id, editedAppointment);
-      setAppointment(editedAppointment); // Update local state after submission
-    }
-    setIsEditing(!isEditing); // Toggle edit mode
+  const handleSaveAppointment = async () => {
+    await updateAppointment(appointment._id, editedAppointment);
+    setAppointment(editedAppointment); // Update local state after submission
   };
 
   const handleInputChange = (field, value) => {
@@ -94,7 +89,7 @@ const SingleAppointment = () => {
         <List
           header={
             <Link to={`/admin/user/${appointment?.userId}`}>
-              <p className="font-serif  text-lg text-blue-600">
+              <p className="font-serif text-lg text-blue-600">
                 {appointment?.username}
               </p>
             </Link>
@@ -106,29 +101,7 @@ const SingleAppointment = () => {
               <Typography.Text className="font-sans " strong>
                 {key}:
               </Typography.Text>
-              {!isEditing ? (
-                key === "username" ? (
-                  <span className="font-sans font-lg ">
-                    {appointment ? appointment.username : ""}
-                  </span>
-                ) : key === "date" ? (
-                  <span>
-                    {appointment
-                      ? dayjs(appointment.date).format("YYYY-MM-DD")
-                      : ""}
-                  </span>
-                ) : key === "time" ? (
-                  <span>
-                    {appointment
-                      ? dayjs(appointment.time, "HH:mm").format("HH:mm")
-                      : ""}
-                  </span>
-                ) : key === "length" ? (
-                  <span>{appointment ? appointment.length : ""}</span>
-                ) : (
-                  <span>{appointment ? appointment.description : ""}</span>
-                )
-              ) : key === "date" ? (
+              {key === "date" ? (
                 <DatePicker
                   value={
                     editedAppointment.date
@@ -168,11 +141,11 @@ const SingleAppointment = () => {
           footer={
             <div className="flex justify-center items-center">
               <Button
-                onClick={handleEditAppointment}
+                onClick={handleSaveAppointment}
                 size="middle"
                 type="primary"
               >
-                {isEditing ? "Save" : "Edit"}
+                Save
               </Button>
             </div>
           }

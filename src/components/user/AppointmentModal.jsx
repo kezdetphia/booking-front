@@ -5,6 +5,7 @@ import DayCalendar from "../DayCalendar";
 import PopUpModal from "../PopUpModal";
 import { useNavigate } from "react-router-dom";
 import { useAppointmentDateContext } from "../../context/appointmentDateContext";
+import { useAppointmentContext } from "../../context/AppointmentContext";
 const AppointmentModal = ({
   setModalOpen,
   modalOpen,
@@ -12,6 +13,7 @@ const AppointmentModal = ({
   submitAppointment,
 }) => {
   const { selectedTime, selectedDate } = useAppointmentDateContext();
+  const { appointments } = useAppointmentContext();
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmSubmit, setConfirmSubmit] = useState(false);

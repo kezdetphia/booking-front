@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import { useAuth } from "./authContext";
 import useSendEmail from "../hooks/useSendEmail";
 import {
@@ -19,15 +20,59 @@ export const AppointmentProvider = ({ children }) => {
   const [disabledDates, setDisabledDates] = useState([]);
   const { sendEmail } = useSendEmail();
 
+  // Initialize Socket.IO client
+  const socket = io(process.env.REACT_APP_API_URL, {
+    transports: ["websocket"],
+    withCredentials: true,
+  });
+
+  socket.on("appointmentUpdated", (data) => {
+    console.log("Appointment updated:", data);
+  });
   // Fetching appointments when the component mounts
+  // useEffect(() => {
+  //   const authToken = localStorage.getItem("authToken");
+  //   if (authToken) {
+  //     getAppointments();
+  //     getDisabledDates();
+  //   } else {
+  //     console.log("token is not available yet to fetch the data");
+  //   }
+  // }, [user]);
+
   useEffect(() => {
+    // Fetch appointments when the component mounts
     const authToken = localStorage.getItem("authToken");
     if (authToken) {
       getAppointments();
       getDisabledDates();
     } else {
-      console.log("token is not available yet to fetch the data");
+      console.log("Token is not available yet to fetch the data");
     }
+
+    // Listen for appointment updates from the server
+    socket.on("appointmentCreated", (newAppointment) => {
+      setAppointments((prev) => [...prev, newAppointment]);
+    });
+
+    socket.on("appointmentUpdated", (updatedAppointment) => {
+      setAppointments((prev) =>
+        prev.map((app) =>
+          app._id === updatedAppointment._id ? updatedAppointment : app
+        )
+      );
+    });
+
+    socket.on("appointmentDeleted", (deletedAppointment) => {
+      setAppointments((prev) =>
+        prev.filter((app) => app._id !== deletedAppointment._id)
+      );
+    });
+
+    // Cleanup socket connection on unmount
+    return () => {
+      socket.disconnect();
+    };
   }, [user]);
 
   //Fetch all appointments from db
@@ -152,6 +197,7 @@ export const AppointmentProvider = ({ children }) => {
   const deleteAppointment = async (appointmentId) => {
     setLoading(true);
     setError(null);
+
     const authToken = localStorage.getItem("authToken");
     if (!authToken) {
       console.log("User not authenticated");
@@ -161,7 +207,7 @@ export const AppointmentProvider = ({ children }) => {
 
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/appointments/deleteappointment/${appointmentId}`,
+        `${process.env.REACT_APP_API_URL}/api/admin/admindeleteappointment/${appointmentId}`,
         {
           method: "DELETE",
           headers: {
@@ -198,11 +244,6 @@ export const AppointmentProvider = ({ children }) => {
           "Your apppontment was cancelled!",
           "Appointment Deleted",
           AppointmentCancelledEmail(data?.appointment)
-          // `<h3>We are so sorry, but we had to cancel your appointment. Please give us a call to reschedule.</h3>
-          // ${data?.appointment?.date} at ${data?.appointment?.time}.
-
-          // Your notes: ${data?.appointment?.desc}
-          // `
         );
         console.log("Email sent successfully");
       } catch (emailError) {

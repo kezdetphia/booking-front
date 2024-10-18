@@ -40,6 +40,7 @@ export const AppointmentProvider = ({ children }) => {
   //   }
   // }, [user]);
 
+  //websocket first
   useEffect(() => {
     // Fetch appointments when the component mounts
     const authToken = localStorage.getItem("authToken");
@@ -69,8 +70,15 @@ export const AppointmentProvider = ({ children }) => {
       );
     });
 
+    // // Cleanup socket connection on unmount
+    // return () => {
+    //   socket.disconnect();
+    // };
     // Cleanup socket connection on unmount
     return () => {
+      socket.off("appointmentCreated");
+      socket.off("appointmentUpdated");
+      socket.off("appointmentDeleted");
       socket.disconnect();
     };
   }, [user]);

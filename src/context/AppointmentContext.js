@@ -37,7 +37,7 @@ export const AppointmentProvider = ({ children }) => {
 
     // Initialize Socket.IO client only once per user change
     console.log("Initializing new socket connection...");
-    socketRef.current = io(process.env.REACT_APP_API_URL, {
+    socketRef.current = io(process.env.REACT_APP_BACKEND_URL, {
       transports: ["websocket"],
       withCredentials: true,
     });
@@ -92,7 +92,7 @@ export const AppointmentProvider = ({ children }) => {
       }
 
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/appointments/getappointments`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/appointments/getappointments`,
         {
           method: "GET",
           headers: {
@@ -136,7 +136,7 @@ export const AppointmentProvider = ({ children }) => {
 
       console.log("Sending POST request to create appointment...");
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/appointments/create`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/appointments/create`,
         {
           method: "POST",
           headers: {
@@ -213,7 +213,7 @@ export const AppointmentProvider = ({ children }) => {
 
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/admin/admindeleteappointment/${appointmentId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/admindeleteappointment/${appointmentId}`,
         {
           method: "DELETE",
           headers: {
@@ -285,7 +285,7 @@ export const AppointmentProvider = ({ children }) => {
     try {
       console.log("Sending PATCH request to update appointment...");
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/admin/admineditappointment/${appointmentId}`, // Ensure the correct endpoint
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/admineditappointment/${appointmentId}`, // Ensure the correct endpoint
         {
           method: "PATCH", // Use PATCH for updates
           headers: {
@@ -352,7 +352,7 @@ export const AppointmentProvider = ({ children }) => {
 
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/admin/admincreatedisableddate`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/admincreatedisableddate`,
         {
           method: "POST",
           headers: {
@@ -376,7 +376,7 @@ export const AppointmentProvider = ({ children }) => {
     const authToken = localStorage.getItem("authToken");
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/admin/admingetdisableddates`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/admingetdisableddates`,
         {
           method: "GET",
           headers: {

@@ -13,7 +13,7 @@ const useSendEmail = () => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/email/send-email`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/email/send-email`,
         {
           method: "POST",
           headers: {

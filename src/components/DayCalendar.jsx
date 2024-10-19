@@ -14,7 +14,7 @@ const DayCalendar = ({ isInteractive, isAdmin }) => {
   const navigate = useNavigate();
   const [clickedTime, setClickedTime] = useState(null); // State to track clicked time
 
-  console.log("usualAppointmentLength", user.usualAppointmentLength);
+  console.log("usualAppointmentLength", user?.usualAppointmentLength);
 
   const hours = [
     "07:00",

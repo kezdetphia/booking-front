@@ -10,7 +10,7 @@ const useGetUserAppointment = (userId) => {
     const getAppointmentsDb = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/users/getuserappointments/${userId}`
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/getuserappointments/${userId}`
           // `http://localhost:3001/api/users/getuserappointments/${userId}`
         );
         if (!response.ok) {

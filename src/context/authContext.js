@@ -19,7 +19,7 @@ export const AuthContextProvider = ({ children }) => {
       try {
         if (token) {
           const res = await fetch(
-            `${process.env.REACT_APP_API_URL}/api/users/getmyuser`,
+            `${process.env.REACT_APP_BACKEND_URL}/api/users/getmyuser`,
             {
               method: "GET",
               headers: {

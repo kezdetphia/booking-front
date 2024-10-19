@@ -71,7 +71,7 @@ const AppointmentEditForm = ({ appointment }) => {
     }
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/admin/admineditappointment/${dataToSubmit.appointmentId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/admineditappointment/${dataToSubmit.appointmentId}`,
         // `http://localhost:3001/api/admin/admineditappointment/${dataToSubmit.appointmentId}`,
         {
           method: "PATCH",

@@ -14,7 +14,7 @@ const AdminUsers = () => {
     const fetchUsers = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/admin/admingetallusers`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/admin/admingetallusers`,
           {
             headers: {
               "Content-Type": "application/json",

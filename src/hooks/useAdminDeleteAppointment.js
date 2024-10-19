@@ -13,7 +13,7 @@ const useAdminDeleteAppointment = () => {
     if (!authToken) console.log("no authtoken in useAdminDeleteAppointment");
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/admin/admindeleteappointment/${appointmentId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/admindeleteappointment/${appointmentId}`,
         {
           method: "DELETE",
           headers: {

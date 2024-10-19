@@ -24,7 +24,7 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
 
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/users/getuserappointments/${userId}`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/getuserappointments/${userId}`,
           {
             method: "GET", // Set method type
             headers: {

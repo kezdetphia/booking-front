@@ -25,7 +25,7 @@ const SignUp = () => {
     setIsSubmitting(true);
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/users/signup`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/signup`,
         {
           method: "POST",
           headers: {

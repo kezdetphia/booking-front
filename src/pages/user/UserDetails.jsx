@@ -27,7 +27,7 @@ const UserDetails = () => {
       setLoading(true); // Start loading
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/users/getuser/${id}`
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/getuser/${id}`
         );
 
         if (!response.ok) {
@@ -128,7 +128,7 @@ const UserDetails = () => {
     const authToken = localStorage.getItem("authToken");
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/admin/adminedituserdetails`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/adminedituserdetails`,
         {
           method: "PATCH",
           headers: {

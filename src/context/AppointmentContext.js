@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { io } from "socket.io-client";
 import { useAuth } from "./authContext";
 import useSendEmail from "../hooks/useSendEmail";
@@ -20,28 +26,40 @@ export const AppointmentProvider = ({ children }) => {
   const [disabledDates, setDisabledDates] = useState([]);
   const { sendEmail } = useSendEmail();
 
-  // Initialize Socket.IO client
-  const socket = io(process.env.REACT_APP_API_URL, {
-    transports: ["websocket"],
-    withCredentials: true,
-  });
+  const socketRef = useRef();
 
-  socket.on("appointmentUpdated", (data) => {
-    console.log("Appointment updated:", data);
-  });
-  // Fetching appointments when the component mounts
-  // useEffect(() => {
-  //   const authToken = localStorage.getItem("authToken");
-  //   if (authToken) {
-  //     getAppointments();
-  //     getDisabledDates();
-  //   } else {
-  //     console.log("token is not available yet to fetch the data");
-  //   }
-  // }, [user]);
-
-  //websocket first
   useEffect(() => {
+    // Check if the socket already exists and disconnect it if needed
+    if (socketRef.current) {
+      console.log("Disconnecting previous socket instance...");
+      socketRef.current.disconnect();
+    }
+
+    // Initialize Socket.IO client only once per user change
+    console.log("Initializing new socket connection...");
+    socketRef.current = io(process.env.REACT_APP_API_URL, {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
+
+    // Listen for appointment updates from the server
+    socketRef.current.on("appointmentUpdated", (data) => {
+      console.log("Appointment updatedinside:", data);
+      setAppointments((prev) =>
+        prev.map((app) => (app._id === data._id ? data : app))
+      );
+    });
+
+    socketRef.current.on("appointmentCreated", (newAppointment) => {
+      setAppointments((prev) => [...prev, newAppointment]);
+    });
+
+    socketRef.current.on("appointmentDeleted", (deletedAppointment) => {
+      setAppointments((prev) =>
+        prev.filter((app) => app._id !== deletedAppointment._id)
+      );
+    });
+
     // Fetch appointments when the component mounts
     const authToken = localStorage.getItem("authToken");
     if (authToken) {
@@ -51,35 +69,15 @@ export const AppointmentProvider = ({ children }) => {
       console.log("Token is not available yet to fetch the data");
     }
 
-    // Listen for appointment updates from the server
-    socket.on("appointmentCreated", (newAppointment) => {
-      setAppointments((prev) => [...prev, newAppointment]);
-    });
-
-    socket.on("appointmentUpdated", (updatedAppointment) => {
-      setAppointments((prev) =>
-        prev.map((app) =>
-          app._id === updatedAppointment._id ? updatedAppointment : app
-        )
-      );
-    });
-
-    socket.on("appointmentDeleted", (deletedAppointment) => {
-      setAppointments((prev) =>
-        prev.filter((app) => app._id !== deletedAppointment._id)
-      );
-    });
-
-    // // Cleanup socket connection on unmount
-    // return () => {
-    //   socket.disconnect();
-    // };
-    // Cleanup socket connection on unmount
+    // Cleanup socket connection on unmount or user change
     return () => {
-      socket.off("appointmentCreated");
-      socket.off("appointmentUpdated");
-      socket.off("appointmentDeleted");
-      socket.disconnect();
+      if (socketRef.current) {
+        console.log("Cleaning up socket connection...");
+        socketRef.current.off("appointmentCreated");
+        socketRef.current.off("appointmentUpdated");
+        socketRef.current.off("appointmentDeleted");
+        socketRef.current.disconnect();
+      }
     };
   }, [user]);
 
@@ -305,6 +303,8 @@ export const AppointmentProvider = ({ children }) => {
 
       const data = await res.json();
       console.log("Received response from server:", data);
+      const oldData = data.oldAppointment;
+      console.log("old data from api", oldData);
 
       // Optionally replace the appointment with the updated data from the server
       setAppointments((prev) =>

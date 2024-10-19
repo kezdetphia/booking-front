@@ -50,7 +50,8 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
     if (authToken && userId) {
       getUserAppointments();
     }
-  }, [authToken, userId]);
+    // }, [authToken, userId]);
+  }, [drawerOpen]);
 
   const categorizeAppointments = (userAppointments) => {
     const now = new Date();
@@ -179,12 +180,12 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
               </>
             ) : (
               <div>
-                <p className="text-center text-xl font-semibold font-serif">
-                  No future userAppointments.
+                <p className="text-center text-lg font-serif">
+                  No future appointments.
                 </p>
                 <div className="flex justify-center pt-5">
                   <Link to="/book" onClick={onChildrenDrawerClose}>
-                    <Button size="large" type="primary">
+                    <Button size="medium" type="primary">
                       <p className="font-serif">
                         Book your next appointment now!
                       </p>

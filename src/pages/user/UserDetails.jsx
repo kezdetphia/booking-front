@@ -1,7 +1,16 @@
-import { Divider, InputNumber, Tag, Skeleton } from "antd";
+import {
+  Divider,
+  InputNumber,
+  Tag,
+  Skeleton,
+  message,
+  Space,
+  Button,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import dayjs from "dayjs";
+import useAdminDeleteAppointment from "../../hooks/useAdminDeleteAppointment";
 
 const UserDetails = () => {
   const [userDetails, setUserDetails] = useState(null);
@@ -9,6 +18,9 @@ const UserDetails = () => {
   const { id } = useParams();
   const [userAppointmentLength, setUserAppointmentLength] = useState();
   const [loading, setLoading] = useState(true); // Loading state
+  const [messageApi, contextHolder] = message.useMessage();
+  const { deleteAppointment } = useAdminDeleteAppointment();
+  const [userDataRefetch, setUserDataRefetch] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -33,7 +45,7 @@ const UserDetails = () => {
     };
 
     fetchUser();
-  }, [id]);
+  }, [id, userDataRefetch]);
 
   const today = dayjs().format("YYYY-MM-DD");
 
@@ -80,14 +92,35 @@ const UserDetails = () => {
     }
 
     return appointments.map((appointment) => (
-      <Link to={`/admin/one-appointment/${appointment?._id}`}>
-        <div key={appointment._id}>
-          <p>Date: {appointment.date}</p>
-          <p>Time: {appointment.time}</p>
-          <p>Description: {appointment.desc || "No description"}</p>
-          <Divider />
-        </div>
-      </Link>
+      <div
+        key={appointment._id}
+        className="flex justify-between items-center  "
+      >
+        <Link
+          to={`/admin/one-appointment/${appointment?._id}`}
+          className="flex-1"
+        >
+          <div>
+            <p>Date: {appointment.date}</p>
+            <p>Time: {appointment.time}</p>
+            <p>
+              Description:{" "}
+              {appointment.desc.substring(0, 20) || "No description"}
+              ...
+            </p>
+            <Divider />
+          </div>
+        </Link>
+
+        <Button
+          danger
+          type="primary"
+          onClick={() => handleDeleteAppointment(appointment._id)}
+          className="mb-8 "
+        >
+          Delete
+        </Button>
+      </div>
     ));
   };
 
@@ -110,11 +143,27 @@ const UserDetails = () => {
         }
       );
       if (!res.ok) {
+        messageApi.open({
+          content: res.message,
+          type: "error",
+        });
         throw new Error("Failed to update user details");
       }
 
       const data = await res.json();
       console.log("User details updated successfully:", data);
+
+      if (res.status === 200) {
+        messageApi.open({
+          content: data.message,
+          type: "success",
+        });
+      } else {
+        messageApi.open({
+          type: "error",
+          content: data.message,
+        });
+      }
     } catch (err) {
       console.error("Error updating user details:", err);
     }
@@ -124,11 +173,21 @@ const UserDetails = () => {
     setUserAppointmentLength(value);
   };
 
+  const handleDeleteAppointment = async (appId) => {
+    await deleteAppointment(appId);
+    messageApi.open({
+      content: "Appointment deleted successfully",
+      type: "success",
+    });
+    setUserDataRefetch(!userDataRefetch);
+  };
+
   return (
     <div>
+      {contextHolder}
       <Skeleton loading={loading} active>
         <Divider orientation="center">
-          <p className="font-serif text-2xl font-bold">
+          <p className="font-serif text-2xl font-bold pt-5 pb-10">
             {userDetails?.username}
           </p>
         </Divider>
@@ -162,6 +221,9 @@ const UserDetails = () => {
             color={selectedCategory === "past" ? "volcano" : "red"}
             onClick={() => setSelectedCategory("past")}
             style={{
+              padding: "8px",
+              borderRadius: "10px",
+              fontSize: "medium",
               cursor: "pointer",
               border:
                 selectedCategory === "past" ? "1px solid #fa541c" : "none",
@@ -173,6 +235,9 @@ const UserDetails = () => {
             color={selectedCategory === "today" ? "geekblue" : "blue"}
             onClick={() => setSelectedCategory("today")}
             style={{
+              padding: "8px",
+              borderRadius: "10px",
+              fontSize: "medium",
               cursor: "pointer",
               border:
                 selectedCategory === "today" ? "1px solid #2f54eb" : "none",
@@ -184,9 +249,12 @@ const UserDetails = () => {
             color={selectedCategory === "future" ? "lime" : "green"}
             onClick={() => setSelectedCategory("future")}
             style={{
+              padding: "8px",
+              borderRadius: "10px",
+              fontSize: "medium",
               cursor: "pointer",
               border:
-                selectedCategory === "future" ? "1px solid #52c41a" : "none",
+                selectedCategory === "future" ? "1px solid #52c41a " : "none",
             }}
           >
             Future: {future.length}

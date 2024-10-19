@@ -47,7 +47,7 @@ const Home = () => {
           Monday - Sunday: 9:30 AM - 6:30 PM
         </p>
         <p className="font-serif">
-          Mesa Nail offers a variety of beauty enhancements such as (manicure,
+          Blablaba offers a variety of beauty enhancements such as (manicure,
           pedicure, UV gel). Our licensed and certified professionals provide
           with a uniquely customized experience.
         </p>

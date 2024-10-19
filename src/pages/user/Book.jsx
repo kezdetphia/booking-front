@@ -97,7 +97,7 @@ const Book = () => {
       desc: "Appointment description",
       date: selectedDate,
       time: selectedTime,
-      length: "1 hour",
+      length: "120",
       booked: true,
     });
   };

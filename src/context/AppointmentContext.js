@@ -79,7 +79,7 @@ export const AppointmentProvider = ({ children }) => {
         socketRef.current.disconnect();
       }
     };
-  }, [user]); // Ensures so
+  }, [user]);
 
   //Fetch all appointments from db
   const getAppointments = async () => {

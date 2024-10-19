@@ -16,6 +16,7 @@ const UserLayoutComponent = () => {
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     setUser(null);
+    setDrawerOpen(false);
     navigate("/signin");
   };
 

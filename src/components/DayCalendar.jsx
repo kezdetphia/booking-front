@@ -14,11 +14,7 @@ const DayCalendar = ({ isInteractive, isAdmin }) => {
   const navigate = useNavigate();
   const [clickedTime, setClickedTime] = useState(null); // State to track clicked time
 
-  console.log("daycalendar rendered");
-  console.log("appointments receive", appointments);
-  useEffect(() => {
-    console.log("useffect appointemnts", appointments);
-  }, [appointments]);
+  console.log("usualAppointmentLength", user.usualAppointmentLength);
 
   const hours = [
     "07:00",
@@ -30,9 +26,9 @@ const DayCalendar = ({ isInteractive, isAdmin }) => {
     "10:00",
     "10:30",
     "11:00",
-    // "11:30",
-    // "12:00",
-    // "12:30",
+    "11:30",
+    "12:00",
+    "12:30",
     "13:00",
     "13:30",
     "14:00",

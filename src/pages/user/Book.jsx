@@ -26,8 +26,6 @@ dayjs.extend(dayLocaleData);
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
-//changed daycalendar
-
 const Book = () => {
   const { user } = useAuth();
   const { postAppointment, disabledDates } =

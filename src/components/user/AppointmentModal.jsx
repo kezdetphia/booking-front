@@ -15,9 +15,11 @@ const AppointmentModal = ({
   submitAppointment,
 }) => {
   const { user } = useAuth();
-  console.log("user", user);
-  const { selectedTime, selectedDate } = useAppointmentDateContext();
-  const { appointments } = useAppointmentContext();
+  const { selectedTime, selectedDate, setSelectedDate, setSelectedTime } =
+    useAppointmentDateContext();
+  // const { appointments } = useAppointmentContext();
+
+  console.log("appointment modal");
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmSubmit, setConfirmSubmit] = useState(false);
@@ -51,7 +53,13 @@ const AppointmentModal = ({
       <Drawer
         title={
           <p className="font-serif">
-            {selectedTime ? `${selectedDate} ${selectedTime}` : "Select spot"}
+            {selectedTime ? `${selectedDate} - ${selectedTime}` : selectedDate}
+
+            {/* {selectedDate
+              ? selectedTime
+                ? `${selectedDate} - ${selectedTime}`
+                : `${selectedDate} - Select spot`
+              : "Select spot"} */}
           </p>
         }
         placement="right"

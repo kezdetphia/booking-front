@@ -30,8 +30,8 @@ const OnHoliday = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-full flex-col">
-      <h1 className="text-2xl font-bold font-serif text-center pt-2 pb-10">
+    <div className="flex justify-center items-center  flex-col   ">
+      <h1 className="text-2xl font-bold font-serif text-center pt-5 pb-10">
         Take a day off or two
       </h1>
       <Space direction="vertical" size={16}>

@@ -12,6 +12,7 @@ import {
   AppointmentCancelledEmail,
   AppointmentConfirmEmail,
   AppointmentChangedEmail,
+  AppointmentConfirmEmailToAdmin,
 } from "../utils/AppointmentEmails";
 
 const AppointmentContext = createContext();
@@ -156,6 +157,7 @@ export const AppointmentProvider = ({ children }) => {
       }
 
       const data = await res.json();
+      console.log("Received response from server appintmend data:", data);
 
       // Replace the temporary appointment with the one from the server
       setAppointments((prev) =>
@@ -166,18 +168,33 @@ export const AppointmentProvider = ({ children }) => {
         data.appointment
       );
 
-      // Send email notification
+      // Send email notification to user
       try {
-        console.log("Attempting to send email...");
+        console.log("Attempting to send email to user...");
         await sendEmail(
           user?.email,
-          "new appointment",
-          "There's a new booking",
+          "Appointment Confirmed",
+          "Appointment Confirmation",
           AppointmentConfirmEmail(data?.appointment)
         );
-        console.log("Email sent successfully");
+        console.log("Email to user sent successfully");
       } catch (emailError) {
-        console.error("Error sending email:", emailError);
+        console.error("Error sending email to user:", emailError);
+      }
+
+      // Send email notification to admin
+      try {
+        console.log("admin email", process.env.ADMIN_EMAIL);
+        console.log("Attempting to send email to admin...");
+        await sendEmail(
+          "fehermark88@gmail.com",
+          "New Booking",
+          "There's a new booking",
+          AppointmentConfirmEmailToAdmin(data?.appointment)
+        );
+        console.log("Email to admin sent successfully");
+      } catch (emailError) {
+        console.error("Error sending email to admin:", emailError);
       }
 
       // Update the user's appointments array
@@ -255,7 +272,7 @@ export const AppointmentProvider = ({ children }) => {
         await sendEmail(
           user?.email,
           "Your apppontment was cancelled!",
-          "Appointment Deleted",
+          "Appointment Cancelled",
           AppointmentCancelledEmail(data?.appointment)
         );
         console.log("Email sent successfully");
@@ -357,6 +374,11 @@ export const AppointmentProvider = ({ children }) => {
     setError(null);
     const authToken = localStorage.getItem("authToken");
 
+    // Optimistic UI update
+    const newDisabledDate = { date, reason }; // Prepare the new disabled date
+    const previousDisabledDates = [...disabledDates]; // Store the previous state
+    setDisabledDates((prev) => [...prev, newDisabledDate]); // Optimistically add the new date to the UI
+
     try {
       const res = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/admin/admincreatedisableddate`,
@@ -366,7 +388,7 @@ export const AppointmentProvider = ({ children }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${authToken}`,
           },
-          body: JSON.stringify({ date, reason }),
+          body: JSON.stringify(newDisabledDate),
         }
       );
 
@@ -376,8 +398,15 @@ export const AppointmentProvider = ({ children }) => {
       }
 
       const data = await res.json();
-      setDisabledDates((prev) => [...prev, data.disabledDates]);
+      // You may update with the server response if it's different from the optimistic one
+      setDisabledDates((prev) => [
+        ...prev.filter((d) => d !== newDisabledDate),
+        data.disabledDates,
+      ]);
     } catch (err) {
+      // Rollback UI if the request fails
+      setDisabledDates(previousDisabledDates); // Restore the previous state
+      setError("Error disabling date. Please try again later.");
       console.log("Error while disabling dates in context:", err);
     }
   };

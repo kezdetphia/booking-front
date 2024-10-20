@@ -1,217 +1,170 @@
-// src/pages/user/Book.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/hu"; // Import Hungarian locale for dayjs
-import isSameOrAfter from "dayjs/plugin/isSameOrAfter"; // Import the plugin
-import isSameOrBefore from "dayjs/plugin/isSameOrBefore"; // Import the plugin
 import {
   Calendar,
   Col,
-  Radio,
   Row,
   Select,
-  theme,
   Typography,
   ConfigProvider,
   message,
-  Divider,
 } from "antd";
-import huHU from "antd/es/locale/hu_HU"; // Import Hungarian locale for Ant Design
-import dayLocaleData from "dayjs/plugin/localeData";
+import huHU from "antd/es/locale/hu_HU";
 import AppointmentModal from "../../components/user/AppointmentModal";
 import { useAuth } from "../../context/authContext";
 import { useAppointmentContext } from "../../context/AppointmentContext";
 import { useAppointmentDateContext } from "../../context/appointmentDateContext";
 
-dayjs.extend(dayLocaleData);
-dayjs.extend(isSameOrAfter);
-dayjs.extend(isSameOrBefore);
+// Extend dayjs functionality
+dayjs.extend(require("dayjs/plugin/localeData"));
+dayjs.extend(require("dayjs/plugin/isSameOrAfter"));
+dayjs.extend(require("dayjs/plugin/isSameOrBefore"));
 
 const Book = () => {
   const { user } = useAuth();
-  const { postAppointment, disabledDates } =
-    // const { postAppointment, appointments, disabledDates } =
-    useAppointmentContext();
-  const [modalOpen, setModalOpen] = useState(false);
-  const { token } = theme.useToken();
-  const [messageApi, contextHolder] = message.useMessage();
-
+  const { postAppointment, disabledDates } = useAppointmentContext();
   const { selectedDate, setSelectedDate, selectedTime } =
     useAppointmentDateContext();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
-  const currentYear = dayjs().year(); // Get the current year
-  const currentMonth = dayjs().month(); // Get the current month (0-indexed)
+  const [calendarValue, setCalendarValue] = useState(dayjs());
 
+  const currentYear = dayjs().year();
+  const currentMonth = dayjs().month(); // Get the current month
+  const maxDate = dayjs().add(3, "month"); // Max date is current + 3 months
+  const maxYear = maxDate.year(); // Year of the max date
+  const maxMonth = maxDate.month(); // Month of the max date
+
+  // Ensure that the selected date is null when the component mounts
+  useEffect(() => {
+    setSelectedDate(null);
+  }, [setSelectedDate]);
+
+  // Function to disable past and blocked dates
   const disabledDate = (current) => {
     if (!current) return false;
+    if (current < dayjs().startOf("day")) return true;
 
-    // Disable days before today
-    if (current < dayjs().startOf("day")) {
-      return true;
-    }
-
-    // Disable dates from the disabledDates array
     const currentDateStr = current.format("YYYY/MM/DD");
-    for (const disabled of disabledDates) {
-      if (disabled.date.length === 2) {
-        const [start, end] = disabled.date;
-        if (
-          dayjs(currentDateStr).isSameOrAfter(dayjs(start)) &&
-          dayjs(currentDateStr).isSameOrBefore(dayjs(end))
-        ) {
-          return true;
-        }
-      }
-    }
-
-    return false;
+    return disabledDates.some((disabled) => {
+      const [start, end] = disabled.date;
+      return (
+        dayjs(currentDateStr).isSameOrAfter(dayjs(start)) &&
+        dayjs(currentDateStr).isSameOrBefore(dayjs(end))
+      );
+    });
   };
 
-  const onClickonWeekends = (value) => {
+  // Function for handling day clicks, including weekends and validation
+  const handleDayClick = (value) => {
     const dayOfWeek = value.day();
+    const formattedDate = value.format("YYYY/MM/DD");
+
     if (dayOfWeek === 0 || dayOfWeek === 6) {
-      setSelectedDate(value.format("YYYY/MM/DD"));
+      setSelectedDate(formattedDate);
       messageApi.info(
-        `Weekends are not available for booking!😔 Please give me a call in advance to book! 🥰`
+        `Weekends are not available for booking! Please call to book.`
       );
       return;
     }
 
-    // Only open the modal if a specific date is selected
     if (value.isSameOrAfter(dayjs(), "day")) {
-      setSelectedDate(value.format("YYYY/MM/DD"));
+      setSelectedDate(formattedDate);
       setModalOpen(true);
     }
   };
 
-  const onPanelChange = (value, mode) => {
-    // Handle panel change without opening the modal
-    console.log("Panel changed:", value.format("YYYY-MM-DD"), mode);
+  // Function to handle month or year changes
+  const handlePanelChange = () => {
+    setSelectedDate(null);
   };
 
+  const renderCalendarHeader = ({ value, onChange }) => {
+    const today = dayjs();
+
+    // Calculate available months
+    const availableMonths = [];
+    for (let i = 0; i < 3; i++) {
+      const nextMonth = today.add(i, "month");
+      availableMonths.push({
+        month: nextMonth.format("MMMM"),
+        index: nextMonth.month(),
+        year: nextMonth.year(),
+      });
+    }
+
+    const monthOptions = availableMonths.map(({ month, index, year }) => (
+      <Select.Option key={`${year}-${index}`} value={`${year}-${index}`}>
+        {month} {year}
+      </Select.Option>
+    ));
+
+    const handleMonthYearChange = (selectedValue) => {
+      const [year, month] = selectedValue.split("-").map(Number);
+      onChange(value.year(year).month(month));
+    };
+
+    return (
+      <div style={{ padding: 8 }}>
+        <Typography.Title level={4}>
+          {selectedDate ? selectedDate : "Book an Appointment"}
+        </Typography.Title>
+        <Row gutter={8}>
+          <Col>
+            <Select
+              size="small"
+              value={`${value.year()}-${value.month()}`}
+              onChange={handleMonthYearChange}
+              style={{ minWidth: 150 }}
+            >
+              {monthOptions}
+            </Select>
+          </Col>
+        </Row>
+      </div>
+    );
+  };
+
+  // Function to submit appointment data
   const submitAppointment = async () => {
-    //context function
     await postAppointment({
-      userId: user?._id,
-      username: user?.username,
-      email: user?.email,
+      userId: user._id,
+      username: user.username,
+      email: user.email,
       desc: "Appointment description",
       date: selectedDate,
       time: selectedTime,
-      length: user?.usualAppointmentLength,
+      length: user.usualAppointmentLength,
       booked: true,
     });
   };
 
-  console.log("date in book", selectedDate);
-
   return (
     <ConfigProvider locale={huHU}>
       {contextHolder}
-      <div className="flex  justify-center items-center w-full py-5  ">
+      <div className="flex justify-center items-center w-full py-5">
         <div className="w-full border border-gray-300 rounded-lg">
           <AppointmentModal
             modalOpen={modalOpen}
             setModalOpen={setModalOpen}
-            // appointments={appointments}
             submitAppointment={submitAppointment}
           />
           <div className="shadow-lg">
             <Calendar
               fullscreen={false}
-              onSelect={onClickonWeekends}
-              disabledDate={disabledDate} // Disable past dates and specified ranges
-              headerRender={({ value, type, onChange, onTypeChange }) => {
-                const monthOptions = [];
-                const localeData = value.localeData();
-                const months = localeData.months(); // Get full month names
-
-                for (let i = currentMonth; i < 12; i++) {
-                  monthOptions.push(
-                    <Select.Option key={i} value={i} className="month-item">
-                      {months[i]}
-                    </Select.Option>
-                  );
-                }
-
-                const year = currentYear;
-                const month = value.month();
-                const options = [];
-                for (let i = year; i <= year + (month === 10 ? 1 : 0); i += 1) {
-                  options.push(
-                    <Select.Option key={i} value={i} className="year-item">
-                      {i}
-                    </Select.Option>
-                  );
-                }
-
-                return (
-                  <div
-                    style={{
-                      padding: 8,
-                    }}
-                  >
-                    <Typography.Title level={4}>
-                      {selectedDate ? (
-                        `${selectedDate} ${selectedTime}`
-                      ) : (
-                        <p className="text-xl font-semibold font-serif">
-                          Book an Appointment
-                        </p>
-                      )}
-                    </Typography.Title>
-                    <Row gutter={8}>
-                      <Col>
-                        <Radio.Group
-                          size="small"
-                          onChange={(e) => onTypeChange(e.target.value)}
-                          value={type}
-                        >
-                          <Radio.Button value="month">
-                            <p className="font-serif">Month</p>
-                          </Radio.Button>
-                          <Radio.Button value="year">
-                            <p className="font-serif">Year</p>
-                          </Radio.Button>
-                        </Radio.Group>
-                      </Col>
-                      <Col>
-                        <Select
-                          size="small"
-                          popupMatchSelectWidth={false}
-                          className="my-year-select"
-                          value={year}
-                          onChange={(newYear) => {
-                            const now = value.clone().year(newYear);
-                            onChange(now);
-                          }}
-                        >
-                          {options}
-                        </Select>
-                      </Col>
-                      <Col>
-                        <Select
-                          size="small"
-                          popupMatchSelectWidth={false}
-                          value={month}
-                          onChange={(newMonth) => {
-                            const now = value.clone().month(newMonth);
-                            onChange(now);
-                          }}
-                        >
-                          {monthOptions}
-                        </Select>
-                      </Col>
-                    </Row>
-                  </div>
-                );
-              }}
-              onPanelChange={onPanelChange}
+              onSelect={handleDayClick}
+              disabledDate={disabledDate}
+              headerRender={renderCalendarHeader}
+              onPanelChange={handlePanelChange}
+              value={calendarValue}
+              onChange={(newValue) => setCalendarValue(newValue)}
             />
           </div>
         </div>
       </div>
-      <p className="font-serif text-lg pt-10 text-center ">
+      <p className="font-serif text-lg pt-10 text-center">
         If you have any questions or weekend booking, please give me a call at
         1234567890
       </p>

@@ -142,8 +142,6 @@ const AppointmentChangedEmail = (appointmentData, oldAppointmentData) => {
     desc: oldDesc,
     length: oldLength,
   } = oldAppointmentData || {};
-  console.log("email appointmentData", appointmentData);
-  console.log("email oldAppointmentData", oldAppointmentData);
 
   return ` 
   <!DOCTYPE html>
@@ -218,3 +216,71 @@ const AppointmentChangedEmail = (appointmentData, oldAppointmentData) => {
 };
 
 export { AppointmentChangedEmail };
+
+const AppointmentConfirmEmailToAdmin = (appointmentData) => {
+  const { date, time, desc, username, length } = appointmentData;
+
+  return ` 
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Booking!</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    h3 {
+      color: #333333;
+    }
+    .appointment-details {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #555555;
+    }
+    .call-link {
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h3>New Booking!</h3>
+    <p>${username}, Just booked a new appointment with you </p>
+    
+    <div class="appointment-details">
+      <p><strong>Appointment Date & Time:</strong> ${date} at ${time}</p>
+      <p><strong>Estimated Duration:</strong> ${length} minutes</p>
+      <p><strong>Your Notes:</strong> ${desc}</p>
+    </div>
+    
+  
+    <div class="footer">
+      <p>This will be fun!</p>
+      <p>Whatever Company</p>
+    </div>
+  </div>
+</body>
+</html>`;
+};
+
+export { AppointmentConfirmEmailToAdmin };

@@ -57,14 +57,16 @@ const AdminLayoutComponent = () => {
 
   const todayAndTomorrow = dateItems.slice(0, 2);
   const otherDays = dateItems.slice(2);
+
+  // Rendering otherDays menu items correctly
   const otherDaysMenu = (
-    <Menu
-      items={otherDays.map((day) => ({
-        key: day.key,
-        label: day.label,
-        onClick: () => handleMenuClick(day.key),
-      }))}
-    />
+    <Menu>
+      {otherDays.map((day) => (
+        <Menu.Item key={day.key} onClick={() => handleMenuClick(day.key)}>
+          {day.label}
+        </Menu.Item>
+      ))}
+    </Menu>
   );
 
   const sections = [
@@ -111,7 +113,7 @@ const AdminLayoutComponent = () => {
                   {item.label}
                 </p>
               ))}
-              <Dropdown menu={otherDaysMenu} trigger={["click"]}>
+              <Dropdown overlay={otherDaysMenu} trigger={["click"]}>
                 <p
                   className="cursor-pointer"
                   style={{

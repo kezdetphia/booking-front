@@ -14,6 +14,7 @@ import {
   Typography,
   ConfigProvider,
   message,
+  Divider,
 } from "antd";
 import huHU from "antd/es/locale/hu_HU"; // Import Hungarian locale for Ant Design
 import dayLocaleData from "dayjs/plugin/localeData";
@@ -105,7 +106,7 @@ const Book = () => {
   return (
     <ConfigProvider locale={huHU}>
       {contextHolder}
-      <div className="flex  justify-center items-center w-full py-5 ">
+      <div className="flex  justify-center items-center w-full py-5  ">
         <div className="w-full border border-gray-300 rounded-lg">
           <AppointmentModal
             modalOpen={modalOpen}
@@ -115,7 +116,7 @@ const Book = () => {
           />
           <div className="shadow-lg">
             <Calendar
-              fullscreen={true}
+              fullscreen={false}
               onSelect={onClickonWeekends}
               disabledDate={disabledDate} // Disable past dates and specified ranges
               headerRender={({ value, type, onChange, onTypeChange }) => {
@@ -208,6 +209,10 @@ const Book = () => {
           </div>
         </div>
       </div>
+      <p className="font-serif text-lg pt-10 text-center ">
+        If you have any questions or weekend booking, please give me a call at
+        1234567890
+      </p>
     </ConfigProvider>
   );
 };

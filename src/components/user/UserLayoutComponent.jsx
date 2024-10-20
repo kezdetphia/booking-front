@@ -26,7 +26,7 @@ const UserLayoutComponent = () => {
       label: (
         <Link to="/">
           {" "}
-          <p className="font-serif">Home</p>
+          <p className="font-serif text-lg">Home</p>
         </Link>
       ),
     },
@@ -35,7 +35,7 @@ const UserLayoutComponent = () => {
       label: (
         <Link to="/book">
           {" "}
-          <p className="font-serif">Book</p>
+          <p className="font-serif text-lg ">Book</p>
         </Link>
       ),
     },
@@ -44,7 +44,7 @@ const UserLayoutComponent = () => {
       label: (
         <Link to="/signin">
           {" "}
-          <p className="font-serif">SignIn</p>
+          <p className="font-serif text-lg ">Sign In</p>
         </Link>
       ),
     },

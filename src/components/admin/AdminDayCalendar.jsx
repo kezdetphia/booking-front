@@ -8,15 +8,14 @@ import { useAppointmentContext } from "../../context/AppointmentContext";
 
 import { Timeline, message, Popconfirm, Button } from "antd";
 import { SmileOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 
 const AdminDayCalendar = ({ isInteractive, isAdmin }) => {
   const { deleteAppointment, appointments } = useAppointmentContext();
   const { user } = useAuth();
   const { setSelectedTime, selectedDate } = useAppointmentDateContext();
   const navigate = useNavigate();
-  const [clickedTime, setClickedTime] = useState(null); // State to track clicked time
-
-  console.log("usualAppointmentLength", user?.usualAppointmentLength);
+  const [clickedTime, setClickedTime] = useState(null);
 
   const hours = [
     "07:00",
@@ -46,22 +45,16 @@ const AdminDayCalendar = ({ isInteractive, isAdmin }) => {
 
   // Filter appointments for the selected date
   const appointmentsForSelectedDate = appointments?.filter(
-    (app) => app.date === selectedDate
+    (app) =>
+      dayjs(app.date).format("YYYY/MM/DD") ===
+      dayjs(selectedDate).format("YYYY/MM/DD")
   );
 
   // Create a set of taken hours based on appointments and their lengths
   const takenHours = new Set();
   appointmentsForSelectedDate.forEach((appointment) => {
-    const startHour = parseInt(appointment.time.split(":")[0], 10);
-    // const length = parseInt(appointment.length, 10);
-    const length = parseInt(user?.usualAppointmentLength / 60, 10);
-
-    for (let i = 0; i < length; i++) {
-      const hourToMark = startHour + i;
-      if (hourToMark < 24) {
-        takenHours.add(hourToMark);
-      }
-    }
+    const startTime = appointment.time; // Full time string (e.g., "07:30")
+    takenHours.add(startTime); // Mark the full time string as taken
   });
 
   const handleDelete = async (e, appId) => {
@@ -71,12 +64,10 @@ const AdminDayCalendar = ({ isInteractive, isAdmin }) => {
   };
 
   const timelineItems = hours.map((time) => {
-    const hour = parseInt(time.split(":")[0], 10);
+    const isTaken = takenHours.has(time); // Check for full time "07:00", "07:30"
     const appointment = appointmentsForSelectedDate.find(
-      (app) => app.time === time
+      (app) => app.time === time // Compare full time
     );
-
-    const isTaken = takenHours.has(hour);
 
     const handleOnClick = () => {
       if (isAdmin) {

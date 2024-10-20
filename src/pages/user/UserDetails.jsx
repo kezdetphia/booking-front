@@ -16,7 +16,7 @@ const UserDetails = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      setLoading(true); // Start loading
+      setLoading(true);
       try {
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/api/users/getuser/${id}`

@@ -23,8 +23,10 @@ import { useAppointmentContext } from "../../context/AppointmentContext";
 import { useAppointmentDateContext } from "../../context/appointmentDateContext";
 
 dayjs.extend(dayLocaleData);
-dayjs.extend(isSameOrAfter); // Extend dayjs with the plugin
-dayjs.extend(isSameOrBefore); // Extend dayjs with the plugin
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
+
+//changed daycalendar
 
 const Book = () => {
   const { user } = useAuth();

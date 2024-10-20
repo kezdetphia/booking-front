@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAppointmentContext } from "../../context/AppointmentContext";
-import DayCalendar from "../../components/DayCalendar";
+// import DayCalendar from "../../components/DayCalendar";
 import { useAppointmentDateContext } from "../../context/appointmentDateContext";
+import AdminDayCalendar from "../../components/admin/AdminDayCalendar";
 
 const AdminDailyAppointments = () => {
   const { appointments } = useAppointmentContext();
@@ -24,7 +25,7 @@ const AdminDailyAppointments = () => {
       {loading ? (
         <div>Loading appointments...</div>
       ) : filteredAppointments.length > 0 ? (
-        <DayCalendar isInteractive={true} isAdmin={true} />
+        <AdminDayCalendar isInteractive={true} isAdmin={true} />
       ) : (
         <div>No appointments for this date.</div>
       )}

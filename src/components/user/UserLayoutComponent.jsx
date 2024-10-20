@@ -85,7 +85,7 @@ const UserLayoutComponent = () => {
       <Content style={{ flex: "1 0 auto", padding: "0px 0px" }}>
         <div
           style={{
-            background: "#FDFDFE",
+            background: "#f7f7f7",
             minHeight: 280,
             padding: 24,
             borderRadius: borderRadiusLG,

@@ -6,12 +6,16 @@ import PopUpModal from "../PopUpModal";
 import { useNavigate } from "react-router-dom";
 import { useAppointmentDateContext } from "../../context/appointmentDateContext";
 import { useAppointmentContext } from "../../context/AppointmentContext";
+import AdminDayCalendar from "../admin/AdminDayCalendar";
+import { useAuth } from "../../context/authContext";
 const AppointmentModal = ({
   setModalOpen,
   modalOpen,
   // appointments,
   submitAppointment,
 }) => {
+  const { user } = useAuth();
+  console.log("user", user);
   const { selectedTime, selectedDate } = useAppointmentDateContext();
   const { appointments } = useAppointmentContext();
 
@@ -66,7 +70,11 @@ const AppointmentModal = ({
         }
       >
         {/* <DayCalendar isInteractive={true} appointments={appointments} /> */}
-        <DayCalendar isInteractive={true} />
+        {user?.isAdmin === true ? (
+          <AdminDayCalendar isInteractive={true} />
+        ) : (
+          <DayCalendar isInteractive={true} />
+        )}
       </Drawer>
       <PopUpModal
         visible={showConfirmModal}

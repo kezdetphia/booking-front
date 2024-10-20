@@ -103,6 +103,8 @@ const Book = () => {
     });
   };
 
+  console.log("date in book", selectedDate);
+
   return (
     <ConfigProvider locale={huHU}>
       {contextHolder}

@@ -249,6 +249,7 @@ export const AppointmentProvider = ({ children }) => {
       setUser(updatedUser);
 
       // Send email notification
+      console.log("check date in context", data?.appointment.date);
       try {
         console.log("Attempting to send email from updateappointments");
         await sendEmail(

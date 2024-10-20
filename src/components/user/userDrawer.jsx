@@ -1,11 +1,8 @@
-// src/components/UserDrawer.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/authContext";
-import { Button, Divider, Drawer, Avatar, List } from "antd";
 import { Link } from "react-router-dom";
-// import { useAppointmentContext } from "../../context/AppointmentContext";
+import { Button, Divider, Drawer, Avatar, List } from "antd";
 
-//TODO: Need to sort out fetching, if i book an appointment it does not show up in the appointments list only if i refresh the page
 function UserDrawer({ drawerOpen, onClose, handleLogout }) {
   const { user } = useAuth();
   const [userAppointments, setUserAppointments] = useState([]);
@@ -16,41 +13,32 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
 
   useEffect(() => {
     const getUserAppointments = async () => {
-      // Make sure both authToken and userId are available
-      if (!authToken || !userId) {
-        console.log("Waiting for user ID and auth token...");
-        return;
-      }
+      if (!authToken || !userId) return;
 
       try {
         const res = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/api/users/getuserappointments/${userId}`,
           {
-            method: "GET", // Set method type
+            method: "GET",
             headers: {
-              "Content-Type": "application/json", // Specify JSON content
-              Authorization: `Bearer ${authToken}`, // Add Bearer token
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
             },
           }
         );
 
         if (res.ok) {
           const data = await res.json();
-          const appointments = data?.appointments;
-          setUserAppointments(appointments); // Set fetched appointments
-        } else {
-          console.log("Failed to fetch appointments: ", res.status);
+          setUserAppointments(data?.appointments);
         }
       } catch (error) {
         console.error("Error fetching appointments: ", error);
       }
     };
 
-    // Trigger fetch only when both authToken and userId are available
     if (authToken && userId) {
       getUserAppointments();
     }
-    // }, [authToken, userId]);
   }, [drawerOpen]);
 
   const categorizeAppointments = (userAppointments) => {
@@ -62,10 +50,10 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
     const future = [];
 
     userAppointments.forEach((appointment) => {
-      const appointmentDate = new Date(appointment.date);
       const appointmentDateTime = new Date(
         `${appointment.date}T${appointment.time}`
       );
+      const appointmentDate = new Date(appointment.date);
 
       if (appointmentDateTime < now) {
         past.push(appointment);
@@ -93,6 +81,24 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
     setChildrenDrawer(false);
   };
 
+  const handleParentDrawerClick = (e) => {
+    // Close parent drawer if not clicking on a link, child drawer content, or child drawer trigger
+    if (
+      !e.target.closest("a") &&
+      !e.target.closest(".child-drawer-content") &&
+      !e.target.closest(".child-drawer-trigger")
+    ) {
+      onClose();
+    }
+  };
+
+  const handleChildDrawerClick = (e) => {
+    // Only close child drawer if clicked outside child drawer content
+    if (!e.target.closest(".child-drawer-content")) {
+      onChildrenDrawerClose();
+    }
+  };
+
   return (
     <Drawer
       title={<p className="font-semibold font-serif text-xl">Menu</p>}
@@ -100,17 +106,18 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
       closable={false}
       onClose={onClose}
       open={drawerOpen}
+      onClick={handleParentDrawerClick} // Detect clicks on the parent drawer
     >
-      <div className="flex flex-col h-full justify-between">
+      <div className="drawer-content flex flex-col h-full justify-between">
         <div className="flex flex-col gap-1">
           <h1
-            className="cursor-pointer font-semibold font-serif"
+            className="cursor-pointer font-semibold font-serif child-drawer-trigger"
             onClick={() => showChildrenDrawer("Profile")}
           >
             My Profile
           </h1>
           <h1
-            className="cursor-pointer font-semibold font-serif"
+            className="cursor-pointer font-semibold font-serif child-drawer-trigger"
             onClick={() => showChildrenDrawer("Appointments")}
           >
             My Appointments
@@ -132,109 +139,104 @@ function UserDrawer({ drawerOpen, onClose, handleLogout }) {
         closable={false}
         onClose={onChildrenDrawerClose}
         open={childrenDrawer}
+        onClick={handleChildDrawerClick} // Detect clicks inside the child drawer
       >
-        {selectedContent === "Appointments" ? (
-          <div>
-            {todayAppointments.length > 0 && (
-              <>
-                <Divider orientation="left" orientationMargin="0">
-                  <p className="font-semibold font-serif ">
-                    Today's Appointments
-                  </p>
-                </Divider>
-                {todayAppointments.map((appointment, index) => (
-                  <div className="flex flex-col" key={`today-${index}`}>
-                    <div>
+        <div className="child-drawer-content">
+          {selectedContent === "Appointments" ? (
+            <div>
+              {todayAppointments.length > 0 && (
+                <>
+                  <Divider orientation="left" orientationMargin="0">
+                    <p className="font-semibold font-serif ">
+                      Today's Appointments
+                    </p>
+                  </Divider>
+                  {todayAppointments.map((appointment, index) => (
+                    <div className="flex flex-col" key={`today-${index}`}>
                       <p className="font-serif">
                         {appointment?.date} {appointment?.time}
                       </p>
-                    </div>
-                    <div>
                       <p className="font-serif">{appointment?.desc}</p>
+                      <Divider />
                     </div>
-                    <Divider />
-                  </div>
-                ))}
-              </>
-            )}
-            {future.length > 0 ? (
-              <>
-                <Divider orientation="left" orientationMargin="0">
-                  <p className="font-semibold font-serif ">
-                    Future Appointments
-                  </p>
-                </Divider>
-                {future.map((appointment, index) => (
-                  <div className="flex flex-col" key={`future-${index}`}>
-                    <div>
-                      <p className="font-serif">
-                        {appointment?.date} {appointment?.time}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-serif">{appointment?.desc}</p>
-                    </div>
-                    <Divider />
-                  </div>
-                ))}
-              </>
-            ) : (
-              <div>
-                <p className="text-center text-lg font-serif">
-                  No future appointments.
-                </p>
-                <div className="flex justify-center pt-5">
-                  <Link to="/book" onClick={onChildrenDrawerClose}>
-                    <Button size="medium" type="primary">
-                      <p className="font-serif">
-                        Book your next appointment now!
-                      </p>
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-        ) : selectedContent === "Profile" ? (
-          <>
-            <Divider orientation="center">
-              <Avatar
-                style={{
-                  backgroundColor: "#ffcccb",
-                }}
-              >
-                <p className="font-serif">
-                  {user?.username?.charAt(0).toUpperCase()}
-                </p>
-              </Avatar>
-            </Divider>
-            <List
-              header={
-                <div>
-                  <p className="font-semibold font-serif">Personal Details</p>
-                </div>
-              }
-              footer={
-                <div className="flex justify-center">
-                  <Link to="/book">
-                    <Button onClick={onChildrenDrawerClose} type="primary">
-                      <p className="font-serif">Book an appointment</p>
-                    </Button>
-                  </Link>
-                </div>
-              }
-              bordered
-              dataSource={personalData}
-              renderItem={(item, index) => (
-                <List.Item key={index}>
-                  <p className="font-serif">{item}</p>
-                </List.Item>
+                  ))}
+                </>
               )}
-            />
-          </>
-        ) : (
-          <h1 className="font-serif">DEFAULT CONTENT</h1>
-        )}
+              {future.length > 0 ? (
+                <>
+                  <Divider orientation="left" orientationMargin="0">
+                    <p className="font-semibold font-serif ">
+                      Future Appointments
+                    </p>
+                  </Divider>
+                  {future.map((appointment, index) => (
+                    <div className="flex flex-col" key={`future-${index}`}>
+                      <p className="font-serif">
+                        {appointment?.date} {appointment?.time}
+                      </p>
+                      <p className="font-serif">{appointment?.desc}</p>
+                      <Divider />
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <div>
+                  <p className="text-center text-lg font-serif">
+                    No future appointments.
+                  </p>
+                  <div className="flex justify-center pt-5">
+                    <Link to="/book" onClick={onChildrenDrawerClose}>
+                      <Button size="medium" type="primary">
+                        <p className="font-serif">
+                          Book your next appointment now!
+                        </p>
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : selectedContent === "Profile" ? (
+            <>
+              <Divider orientation="center">
+                <Avatar
+                  style={{
+                    backgroundColor: "#ffcccb",
+                  }}
+                >
+                  <p className="font-serif">
+                    {user?.username?.charAt(0).toUpperCase()}
+                  </p>
+                </Avatar>
+              </Divider>
+              <List
+                header={
+                  <div>
+                    <p className="font-semibold font-serif">Personal Details</p>
+                  </div>
+                }
+                footer={
+                  <div className="flex justify-center">
+                    <Link to="/book">
+                      <Button onClick={onChildrenDrawerClose} type="primary">
+                        <p className="font-serif">Book an appointment</p>
+                      </Button>
+                    </Link>
+                  </div>
+                }
+                bordered
+                dataSource={personalData}
+                renderItem={(item, index) => (
+                  <List.Item key={index}>
+                    <p className="font-serif">{item}</p>
+                  </List.Item>
+                )}
+              />
+            </>
+          ) : (
+            <h1 className="font-serif">DEFAULT CONTENT</h1>
+          )}
+        </div>
       </Drawer>
     </Drawer>
   );

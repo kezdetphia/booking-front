@@ -5,21 +5,11 @@ import DayCalendar from "../DayCalendar";
 import PopUpModal from "../PopUpModal";
 import { useNavigate } from "react-router-dom";
 import { useAppointmentDateContext } from "../../context/appointmentDateContext";
-import { useAppointmentContext } from "../../context/AppointmentContext";
 import AdminDayCalendar from "../admin/AdminDayCalendar";
 import { useAuth } from "../../context/authContext";
-const AppointmentModal = ({
-  setModalOpen,
-  modalOpen,
-  // appointments,
-  submitAppointment,
-}) => {
+const AppointmentModal = ({ setModalOpen, modalOpen, submitAppointment }) => {
   const { user } = useAuth();
-  const { selectedTime, selectedDate, setSelectedDate, setSelectedTime } =
-    useAppointmentDateContext();
-  // const { appointments } = useAppointmentContext();
-
-  console.log("appointment modal");
+  const { selectedTime, selectedDate } = useAppointmentDateContext();
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmSubmit, setConfirmSubmit] = useState(false);
@@ -33,12 +23,6 @@ const AppointmentModal = ({
   const onOk = () => {
     setShowConfirmModal(true); // Open the PopUpModal
     setModalOpen(false);
-
-    // if (confirmSubmit === true) {
-    //   submitAppointment();
-    // } else {
-    //   console.log("not true");
-    // }
   };
 
   useEffect(() => {
@@ -54,12 +38,6 @@ const AppointmentModal = ({
         title={
           <p className="font-serif">
             {selectedTime ? `${selectedDate} - ${selectedTime}` : selectedDate}
-
-            {/* {selectedDate
-              ? selectedTime
-                ? `${selectedDate} - ${selectedTime}`
-                : `${selectedDate} - Select spot`
-              : "Select spot"} */}
           </p>
         }
         placement="right"
@@ -77,7 +55,6 @@ const AppointmentModal = ({
           </Space>
         }
       >
-        {/* <DayCalendar isInteractive={true} appointments={appointments} /> */}
         {user?.isAdmin === true ? (
           <AdminDayCalendar isInteractive={true} />
         ) : (

@@ -31,12 +31,6 @@ const Book = () => {
 
   const [calendarValue, setCalendarValue] = useState(dayjs());
 
-  const currentYear = dayjs().year();
-  const currentMonth = dayjs().month(); // Get the current month
-  const maxDate = dayjs().add(3, "month"); // Max date is current + 3 months
-  const maxYear = maxDate.year(); // Year of the max date
-  const maxMonth = maxDate.month(); // Month of the max date
-
   // Ensure that the selected date is null when the component mounts
   useEffect(() => {
     setSelectedDate(null);

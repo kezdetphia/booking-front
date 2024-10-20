@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppointmentDateContext } from "../context/appointmentDateContext";
 
 const DayCalendar = ({ isInteractive, isAdmin }) => {
-  const { deleteAppointment, appointments } = useAppointmentContext();
+  const { appointments } = useAppointmentContext();
   const { user } = useAuth();
   const { setSelectedTime, selectedDate } = useAppointmentDateContext();
   const navigate = useNavigate();

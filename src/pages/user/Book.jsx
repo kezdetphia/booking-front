@@ -97,126 +97,115 @@ const Book = () => {
       desc: "Appointment description",
       date: selectedDate,
       time: selectedTime,
-      length: "120",
+      length: user?.usualAppointmentLength,
       booked: true,
     });
-  };
-
-  const wrapperStyle = {
-    display: "flex", // Add flex display
-    justifyContent: "center", // Center horizontally
-    width: "100%", // Full width to allow centering
-    padding: "20px 0", // Optional padding for aesthetics
-  };
-
-  const calendarStyle = {
-    width: "100%",
-    border: `1px solid ${token.colorBorderSecondary}`,
-    borderRadius: token.borderRadiusLG,
   };
 
   return (
     <ConfigProvider locale={huHU}>
       {contextHolder}
-      <div style={wrapperStyle}>
-        <div style={calendarStyle}>
+      <div className="flex  justify-center items-center w-full py-5 ">
+        <div className="w-full border border-gray-300 rounded-lg">
           <AppointmentModal
             modalOpen={modalOpen}
             setModalOpen={setModalOpen}
             // appointments={appointments}
             submitAppointment={submitAppointment}
           />
-          <Calendar
-            fullscreen={false}
-            onSelect={onClickonWeekends}
-            disabledDate={disabledDate} // Disable past dates and specified ranges
-            headerRender={({ value, type, onChange, onTypeChange }) => {
-              const monthOptions = [];
-              const localeData = value.localeData();
-              const months = localeData.months(); // Get full month names
+          <div className="shadow-lg">
+            <Calendar
+              fullscreen={true}
+              onSelect={onClickonWeekends}
+              disabledDate={disabledDate} // Disable past dates and specified ranges
+              headerRender={({ value, type, onChange, onTypeChange }) => {
+                const monthOptions = [];
+                const localeData = value.localeData();
+                const months = localeData.months(); // Get full month names
 
-              for (let i = currentMonth; i < 12; i++) {
-                monthOptions.push(
-                  <Select.Option key={i} value={i} className="month-item">
-                    {months[i]}
-                  </Select.Option>
+                for (let i = currentMonth; i < 12; i++) {
+                  monthOptions.push(
+                    <Select.Option key={i} value={i} className="month-item">
+                      {months[i]}
+                    </Select.Option>
+                  );
+                }
+
+                const year = currentYear;
+                const month = value.month();
+                const options = [];
+                for (let i = year; i <= year + (month === 10 ? 1 : 0); i += 1) {
+                  options.push(
+                    <Select.Option key={i} value={i} className="year-item">
+                      {i}
+                    </Select.Option>
+                  );
+                }
+
+                return (
+                  <div
+                    style={{
+                      padding: 8,
+                    }}
+                  >
+                    <Typography.Title level={4}>
+                      {selectedDate ? (
+                        `${selectedDate} ${selectedTime}`
+                      ) : (
+                        <p className="text-xl font-semibold font-serif">
+                          Book an Appointment
+                        </p>
+                      )}
+                    </Typography.Title>
+                    <Row gutter={8}>
+                      <Col>
+                        <Radio.Group
+                          size="small"
+                          onChange={(e) => onTypeChange(e.target.value)}
+                          value={type}
+                        >
+                          <Radio.Button value="month">
+                            <p className="font-serif">Month</p>
+                          </Radio.Button>
+                          <Radio.Button value="year">
+                            <p className="font-serif">Year</p>
+                          </Radio.Button>
+                        </Radio.Group>
+                      </Col>
+                      <Col>
+                        <Select
+                          size="small"
+                          popupMatchSelectWidth={false}
+                          className="my-year-select"
+                          value={year}
+                          onChange={(newYear) => {
+                            const now = value.clone().year(newYear);
+                            onChange(now);
+                          }}
+                        >
+                          {options}
+                        </Select>
+                      </Col>
+                      <Col>
+                        <Select
+                          size="small"
+                          popupMatchSelectWidth={false}
+                          value={month}
+                          onChange={(newMonth) => {
+                            const now = value.clone().month(newMonth);
+                            onChange(now);
+                          }}
+                        >
+                          {monthOptions}
+                        </Select>
+                      </Col>
+                    </Row>
+                  </div>
                 );
-              }
-
-              const year = currentYear;
-              const month = value.month();
-              const options = [];
-              for (let i = year; i <= year + (month === 10 ? 1 : 0); i += 1) {
-                options.push(
-                  <Select.Option key={i} value={i} className="year-item">
-                    {i}
-                  </Select.Option>
-                );
-              }
-
-              return (
-                <div
-                  style={{
-                    padding: 8,
-                  }}
-                >
-                  <Typography.Title level={4}>
-                    {selectedDate ? (
-                      `${selectedDate} ${selectedTime}`
-                    ) : (
-                      <p className="text-xl font-semibold font-serif">
-                        Book an Appointment
-                      </p>
-                    )}
-                  </Typography.Title>
-                  <Row gutter={8}>
-                    <Col>
-                      <Radio.Group
-                        size="small"
-                        onChange={(e) => onTypeChange(e.target.value)}
-                        value={type}
-                      >
-                        <Radio.Button value="month">
-                          <p className="font-serif">Month</p>
-                        </Radio.Button>
-                        <Radio.Button value="year">
-                          <p className="font-serif">Year</p>
-                        </Radio.Button>
-                      </Radio.Group>
-                    </Col>
-                    <Col>
-                      <Select
-                        size="small"
-                        popupMatchSelectWidth={false}
-                        className="my-year-select"
-                        value={year}
-                        onChange={(newYear) => {
-                          const now = value.clone().year(newYear);
-                          onChange(now);
-                        }}
-                      >
-                        {options}
-                      </Select>
-                    </Col>
-                    <Col>
-                      <Select
-                        size="small"
-                        popupMatchSelectWidth={false}
-                        value={month}
-                        onChange={(newMonth) => {
-                          const now = value.clone().month(newMonth);
-                          onChange(now);
-                        }}
-                      >
-                        {monthOptions}
-                      </Select>
-                    </Col>
-                  </Row>
-                </div>
-              );
-            }}
-            onPanelChange={onPanelChange}
-          />
+              }}
+              onPanelChange={onPanelChange}
+            />
+          </div>
         </div>
       </div>
     </ConfigProvider>

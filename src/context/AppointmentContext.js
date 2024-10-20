@@ -84,6 +84,7 @@ export const AppointmentProvider = ({ children }) => {
   //Fetch all appointments from db
   const getAppointments = async () => {
     setLoading(true);
+    setError(null);
     try {
       const authToken = localStorage.getItem("authToken");
       if (!authToken) {
@@ -103,6 +104,7 @@ export const AppointmentProvider = ({ children }) => {
       );
 
       if (!res.ok) throw Error("server res nok ok");
+      setError("Error! Please try again later");
 
       const data = await res.json();
       setAppointments(data.appointments);
@@ -148,6 +150,7 @@ export const AppointmentProvider = ({ children }) => {
       );
 
       if (!res.ok) {
+        setError("Error booking appointment. Please try again later.");
         console.error("Server responded with an error:", res.status);
         throw new Error("Server error in postAppointmentDb context");
       }
@@ -223,7 +226,10 @@ export const AppointmentProvider = ({ children }) => {
         }
       );
 
-      if (!res.ok) throw new Error("Server error in deleteAppointment context");
+      if (!res.ok) {
+        setError("Error deleting appointment. Please try again later.");
+        throw new Error("Server error in deleteAppointment context");
+      }
 
       // Optimistically update the state
       setAppointments((prev) =>
@@ -298,13 +304,12 @@ export const AppointmentProvider = ({ children }) => {
 
       if (!res.ok) {
         console.error("Server responded with an error:", res.status);
+        setError("Error changing appointment. Try again later.");
         throw new Error("Server error in updateAppointment context");
       }
 
       const data = await res.json();
       console.log("Received response from server:", data);
-      const oldData = data.oldAppointment;
-      console.log("old data from api", oldData);
 
       // Optionally replace the appointment with the updated data from the server
       setAppointments((prev) =>
@@ -348,6 +353,7 @@ export const AppointmentProvider = ({ children }) => {
   };
 
   const disableDates = async (date, reason) => {
+    setError(null);
     const authToken = localStorage.getItem("authToken");
 
     try {
@@ -363,7 +369,10 @@ export const AppointmentProvider = ({ children }) => {
         }
       );
 
-      if (!res.ok) throw new Error("Server error in disableDates context");
+      if (!res.ok) {
+        setError("Error disabling date. Please try again later.");
+        throw new Error("Server error in disableDates context");
+      }
 
       const data = await res.json();
       setDisabledDates((prev) => [...prev, data.disabledDates]);
@@ -373,6 +382,7 @@ export const AppointmentProvider = ({ children }) => {
   };
 
   const getDisabledDates = async () => {
+    setError(null);
     const authToken = localStorage.getItem("authToken");
     try {
       const res = await fetch(

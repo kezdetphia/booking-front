@@ -78,7 +78,15 @@ const DayCalendar = ({ isInteractive, isAdmin }) => {
               cursor: !isTaken && isInteractive ? "pointer" : "not-allowed",
               display: "block",
               textAlign: "center",
-              border: `${clickedTime === time ? "" : "1px solid #FFFFFF"}`,
+              padding: "6px",
+              border: "none ",
+              borderRadius: "6px",
+              boxShadow: `${
+                clickedTime === time
+                  ? "4px 4px 10px rgba(0, 0, 0, 0.3)"
+                  : "none"
+              }`,
+              // border: `${clickedTime === time ? "" : "2px solid #FFFFFF"}`,
             }}
             onClick={() => handleTagClick(time)}
           >
@@ -91,14 +99,26 @@ const DayCalendar = ({ isInteractive, isAdmin }) => {
 
   return (
     <>
-      <Divider orientation="left">Morning</Divider>
-      <Row gutter={[16, 16]}>{renderTags(timeSlots.morning)}</Row>
+      <Divider orientation="left">
+        <p className="font-serif">Morning</p>
+      </Divider>
+      <div className=" shadow-md p-4 rounded-lg ">
+        <Row gutter={[16, 16]}>{renderTags(timeSlots.morning)}</Row>
+      </div>
 
-      <Divider orientation="left">Afternoon</Divider>
-      <Row gutter={[16, 16]}>{renderTags(timeSlots.afternoon)}</Row>
+      <Divider orientation="left">
+        <p className="font-serif">Afternoon</p>
+      </Divider>
+      <div className=" shadow-md p-4 rounded-lg ">
+        <Row gutter={[16, 16]}>{renderTags(timeSlots.afternoon)}</Row>
+      </div>
 
-      <Divider orientation="left">Evening</Divider>
-      <Row gutter={[16, 16]}>{renderTags(timeSlots.evening)}</Row>
+      <Divider orientation="left">
+        <p className="font-serif">Evening</p>
+      </Divider>
+      <div className=" shadow-md p-4 rounded-lg ">
+        <Row gutter={[16, 16]}>{renderTags(timeSlots.evening)}</Row>
+      </div>
     </>
   );
 };

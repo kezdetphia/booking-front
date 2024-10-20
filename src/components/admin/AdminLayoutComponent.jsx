@@ -135,7 +135,12 @@ const AdminLayoutComponent = () => {
         </Button>
       </Header>
       <Content
-        style={{ padding: "15px 24px 0", marginTop: 64, flex: "1 0 auto" }}
+        style={{
+          padding: "15px 24px 0",
+          marginTop: 64,
+          flex: "1 0 auto",
+          backgroundColor: "#f7f7f7",
+        }}
       >
         <Outlet />
       </Content>

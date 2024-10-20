@@ -10,6 +10,7 @@ import {
   Select,
   Typography,
   Skeleton,
+  message,
 } from "antd";
 import dayjs from "dayjs"; // For managing date and time formatting
 import { useAppointmentContext } from "../context/AppointmentContext";
@@ -19,7 +20,8 @@ const SingleAppointment = () => {
   const [editedAppointment, setEditedAppointment] = useState({}); // Store edited values
   const [loading, setLoading] = useState(true); // Loading state
   const { appointmentId } = useParams();
-  const { updateAppointment } = useAppointmentContext();
+  const { updateAppointment, error } = useAppointmentContext();
+  const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     const fetchAppointment = async () => {
@@ -41,7 +43,7 @@ const SingleAppointment = () => {
 
         const data = await res.json();
         setAppointment(data.appointment);
-        setEditedAppointment(data.appointment); // Initialize edited appointment with fetched data
+        setEditedAppointment(data.appointment);
       } catch (err) {
         console.error(err);
       } finally {
@@ -54,7 +56,18 @@ const SingleAppointment = () => {
 
   const handleSaveAppointment = async () => {
     await updateAppointment(appointment._id, editedAppointment);
-    setAppointment(editedAppointment); // Update local state after submission
+    if (error) {
+      messageApi.open({
+        content: error,
+        type: "error",
+      });
+    } else {
+      setAppointment(editedAppointment);
+      messageApi.open({
+        content: "Appointment successfully updated",
+        type: "success",
+      });
+    }
   };
 
   const handleInputChange = (field, value) => {
@@ -80,6 +93,7 @@ const SingleAppointment = () => {
 
   return (
     <div>
+      {contextHolder}
       <Divider orientation="center">
         <p className="font-sans font-bold text-xl pb-10 pt-5">
           Appointment Details

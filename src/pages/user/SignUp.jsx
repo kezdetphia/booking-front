@@ -90,21 +90,17 @@ const SignUp = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="flex justify-center font-serif font-semibold text-xl">
-        Sign Up
-      </h1>
-      <div className="max-w-md mx-auto bg-white shadow-md rounded-md p-6">
-        {contextHolder}
+    <div className="flex  justify-center shadow-lg pt-10  ">
+      <div className="w-full max-w-md p-5 space-y-6 bg-white rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold text-center text-gray-800 font-serif">
+          Create Your Account
+        </h1>
+        <p className="text-center text-gray-500">Join us to get started</p>
         <Form
           scrollToFirstError={true}
-          form={form}
           name="signup"
           initialValues={{
             remember: true,
-          }}
-          style={{
-            maxWidth: 360,
           }}
           onFinish={onFinish}
         >
@@ -120,7 +116,11 @@ const SignUp = () => {
             ]}
             hasFeedback
           >
-            <Input prefix={<UserOutlined />} placeholder="Email Address" />
+            <Input
+              prefix={<UserOutlined />}
+              placeholder="Email Address"
+              className="px-4 py-2 text-lg border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            />
           </Form.Item>
 
           {/* Username */}
@@ -134,7 +134,11 @@ const SignUp = () => {
             ]}
             hasFeedback
           >
-            <Input prefix={<UserOutlined />} placeholder="Username" />
+            <Input
+              prefix={<UserOutlined />}
+              placeholder="Username"
+              className="px-4 py-2 text-lg border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            />
           </Form.Item>
 
           {/* Phone Number */}
@@ -148,7 +152,11 @@ const SignUp = () => {
             ]}
             hasFeedback
           >
-            <Input prefix={<UserOutlined />} placeholder="Phone Number" />
+            <Input
+              prefix={<UserOutlined />}
+              placeholder="Phone Number"
+              className="px-4 py-2 text-lg border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            />
           </Form.Item>
 
           {/* Password */}
@@ -166,10 +174,10 @@ const SignUp = () => {
             ]}
             hasFeedback
           >
-            <Input
+            <Input.Password
               prefix={<LockOutlined />}
-              type="password"
               placeholder="Password"
+              className="px-4 py-2 text-lg border rounded-md focus:outline-none focus:ring focus:border-blue-300"
             />
           </Form.Item>
 
@@ -193,10 +201,10 @@ const SignUp = () => {
               }),
             ]}
           >
-            <Input
+            <Input.Password
               prefix={<LockOutlined />}
-              type="password"
               placeholder="Repeat Password"
+              className="px-4 py-2 text-lg border rounded-md focus:outline-none focus:ring focus:border-blue-300"
             />
           </Form.Item>
 
@@ -205,14 +213,17 @@ const SignUp = () => {
               block
               type="primary"
               htmlType="submit"
+              className="w-full px-4 py-2 text-lg font-bold text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
               loading={isSubmitting}
             >
               {isSubmitting ? "Registering..." : "Register"}
             </Button>
             <div className="flex justify-center pt-4">
-              <p className="font-serif">Already have an account?&nbsp;</p>
+              <p className="font-serif text-gray-500">
+                Already have an account?&nbsp;
+              </p>
               <a href="/signin">
-                <p className="text-blue-500 font-semibold font-serif">
+                <p className="text-blue-500 font-semibold font-serif hover:underline">
                   Log in!
                 </p>
               </a>

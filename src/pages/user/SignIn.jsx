@@ -68,7 +68,7 @@ const SignIn = () => {
     }
   };
   return (
-    <div className="flex  justify-center shadow-lg pt-10 ">
+    <div className="flex  justify-center  pt-10 ">
       <div className="w-full max-w-md p-5 space-y-6 bg-white rounded-lg shadow-lg h-[700px]">
         <h1 className="text-3xl font-bold text-center text-gray-800 font-serif">
           Welcome Back

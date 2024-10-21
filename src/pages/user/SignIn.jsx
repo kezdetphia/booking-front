@@ -67,22 +67,17 @@ const SignIn = () => {
       });
     }
   };
-
   return (
-    <div className="container mx-auto px-4 py-8 min-h-screen ">
-      <h1 className="flex justify-center font-semibold font-serif text-xl">
-        Sign In
-      </h1>
-      <div className="max-w-md mx-auto bg-white shadow-md rounded-md p-6 ">
-        {contextHolder}
+    <div className="flex  justify-center shadow-lg pt-10 ">
+      <div className="w-full max-w-md p-5 space-y-6 bg-white rounded-lg shadow-lg h-[700px]">
+        <h1 className="text-3xl font-bold text-center text-gray-800 font-serif">
+          Welcome Back
+        </h1>
+        <p className="text-center text-gray-500">Sign in to your account</p>
         <Form
-          form={form}
           name="login"
           initialValues={{
             remember: true,
-          }}
-          style={{
-            maxWidth: 360,
           }}
           onFinish={onFinish}
         >
@@ -96,7 +91,11 @@ const SignIn = () => {
               },
             ]}
           >
-            <Input prefix={<UserOutlined />} placeholder="Email Address" />
+            <Input
+              prefix={<UserOutlined />}
+              placeholder="Email Address"
+              className="px-4 py-2 text-lg border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            />
           </Form.Item>
 
           {/* Password */}
@@ -109,26 +108,34 @@ const SignIn = () => {
               },
             ]}
           >
-            <Input
+            <Input.Password
               prefix={<LockOutlined />}
-              type="password"
               placeholder="Password"
+              className="px-4 py-2 text-lg border rounded-md focus:outline-none focus:ring focus:border-blue-300"
             />
           </Form.Item>
 
           <Form.Item>
-            <Button block type="primary" htmlType="submit">
-              <p className="font-serif">Login</p>
+            <Button
+              block
+              type="primary"
+              htmlType="submit"
+              className="w-full px-4 py-2 text-lg font-bold text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+            >
+              <span className="font-serif">Sign In</span>
             </Button>
-            <div className="flex justify-center pt-4">
-              <p className="font-serif">Don't have an account yet? &nbsp; </p>
-              <a href="/signup">
-                <p className="text-blue-500 font-semibold font-serif">
-                  Sign Up!
-                </p>
-              </a>
-            </div>
           </Form.Item>
+
+          <div className="flex justify-center pt-4">
+            <p className="font-serif text-gray-500">
+              Don't have an account? &nbsp;
+            </p>
+            <a href="/signup">
+              <p className="text-blue-500 font-semibold font-serif hover:underline">
+                Sign Up
+              </p>
+            </a>
+          </div>
         </Form>
       </div>
     </div>

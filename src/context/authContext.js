@@ -53,11 +53,11 @@ export const AuthContextProvider = ({ children }) => {
     setUserAuthenticated();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    setUser(null);
-    // navigate("/signin");
-  };
+  // const handleLogout = () => {
+  //   localStorage.removeItem("authToken");
+  //   setUser(null);
+  //   // navigate("/signin");
+  // };
 
   return (
     <AuthContext.Provider

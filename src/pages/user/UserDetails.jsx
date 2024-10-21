@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import useAdminDeleteAppointment from "../../hooks/useAdminDeleteAppointment";
+import { useAuth } from "../../context/authContext";
 
 const UserDetails = () => {
   const [userDetails, setUserDetails] = useState(null);
@@ -13,6 +14,8 @@ const UserDetails = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const { deleteAppointment } = useAdminDeleteAppointment();
   const [userDataRefetch, setUserDataRefetch] = useState(false);
+
+  const { user, setUser } = useAuth();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -134,6 +137,7 @@ const UserDetails = () => {
           }),
         }
       );
+
       if (!res.ok) {
         messageApi.open({
           content: res.message,
@@ -150,6 +154,10 @@ const UserDetails = () => {
           content: data.message,
           type: "success",
         });
+        setUser((prevUser) => ({
+          ...prevUser,
+          usualAppointmentLength: data?.user?.usualAppointmentLength,
+        }));
       } else {
         messageApi.open({
           type: "error",

@@ -5,9 +5,10 @@ import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { useAppointmentDateContext } from "../context/appointmentDateContext";
 import dayjs from "dayjs";
+
 const DayCalendar = ({ isInteractive, isAdmin }) => {
   const { appointments } = useAppointmentContext();
-  const { user } = useAuth();
+  const { user } = useAuth(); // Get user from AuthContext
   const { setSelectedTime, selectedDate } = useAppointmentDateContext();
   const navigate = useNavigate();
   const [clickedTime, setClickedTime] = useState(null); // State to track clicked time
@@ -44,7 +45,6 @@ const DayCalendar = ({ isInteractive, isAdmin }) => {
   );
 
   // Create a set of taken hours based on appointments
-  // Create a set of taken hours based on appointments
   const takenHours = new Set();
   appointmentsForSelectedDate.forEach((appointment) => {
     const startHour = appointment.time; // Start time in "HH:mm" format
@@ -55,7 +55,6 @@ const DayCalendar = ({ isInteractive, isAdmin }) => {
 
     // Add the appointment length to get the end time
     const endTime = startTime.add(appLength, "minute");
-    const endHour = endTime.format("HH:mm"); // Format end time as "HH:mm"
 
     // Loop through all 30-minute intervals between startHour and endHour
     let timeSlot = startTime;
@@ -63,38 +62,41 @@ const DayCalendar = ({ isInteractive, isAdmin }) => {
       takenHours.add(timeSlot.format("HH:mm")); // Add each 30-minute slot to the set
       timeSlot = timeSlot.add(30, "minute"); // Increment by 30 minutes
     }
-
-    console.log("Taken time slots:", [...takenHours]);
   });
-  // To verify the Set content
-  console.log("takenhiursssssss", [...takenHours]);
 
   const handleTagClick = (time) => {
     const selectedTime = dayjs(time, "HH:mm"); // Parse the selected time
+    const appointmentLength = user?.usualAppointmentLength || 30; // Get the user's usual appointment length in minutes
+    const selectedEndTime = selectedTime.add(appointmentLength, "minute"); // Calculate the end time based on the user's appointment length
 
     let isTaken = false;
 
-    // Loop through the takenHours Set
-    for (const [startHour, endHour] of takenHours) {
-      const startTime = dayjs(startHour, "HH:mm");
-      const endTime = dayjs(endHour, "HH:mm");
+    // Loop through the takenHours Set to check for overlaps
+    for (const appointment of appointmentsForSelectedDate) {
+      const startTime = dayjs(appointment.time, "HH:mm");
+      const endTime = startTime.add(appointment.length, "minute");
 
-      // Check if the selected time falls between the start and end times
+      // Check if the selected time or the selected end time overlaps with any existing appointment
       if (
-        selectedTime.isSameOrAfter(startTime) &&
-        selectedTime.isBefore(endTime)
+        (selectedTime.isSameOrAfter(startTime) &&
+          selectedTime.isBefore(endTime)) || // Start time overlaps
+        (selectedEndTime.isAfter(startTime) &&
+          selectedEndTime.isBefore(endTime)) || // End time overlaps
+        (selectedTime.isBefore(startTime) && selectedEndTime.isAfter(endTime)) // Selected time covers the whole slot
       ) {
         isTaken = true;
-        break; // Exit the loop if the time is taken
+        break;
       }
     }
 
     if (isTaken) {
-      message.error("Selected time overlaps with another appointment.");
+      message.error(
+        "Selected time overlaps with another appointment or does not provide enough time."
+      );
       return;
     }
 
-    if (!isTaken && isInteractive) {
+    if (isInteractive && !isTaken) {
       if (user) {
         setSelectedTime(time);
         setClickedTime(time); // Set the clicked time
@@ -121,13 +123,12 @@ const DayCalendar = ({ isInteractive, isAdmin }) => {
               textAlign: "center",
               padding: "6px",
               borderRadius: "6px",
-              boxShadow: `${
+              boxShadow:
                 clickedTime === time
                   ? "4px 4px 10px rgba(0, 0, 0, 0.3)"
-                  : "none"
-              }`,
+                  : "none",
             }}
-            onClick={() => handleTagClick(time)} // Handle clicking of time slots
+            onClick={!isTaken ? () => handleTagClick(time) : undefined} // Attach onClick only if not taken
           >
             {time}
           </Tag>
@@ -141,21 +142,21 @@ const DayCalendar = ({ isInteractive, isAdmin }) => {
       <Divider orientation="left">
         <p className="font-serif">Morning</p>
       </Divider>
-      <div className=" shadow-md p-4 rounded-lg ">
+      <div className="shadow-md p-4 rounded-lg">
         <Row gutter={[16, 16]}>{renderTags(timeSlots.morning)}</Row>
       </div>
 
       <Divider orientation="left">
         <p className="font-serif">Afternoon</p>
       </Divider>
-      <div className=" shadow-md p-4 rounded-lg ">
+      <div className="shadow-md p-4 rounded-lg">
         <Row gutter={[16, 16]}>{renderTags(timeSlots.afternoon)}</Row>
       </div>
 
       <Divider orientation="left">
         <p className="font-serif">Evening</p>
       </Divider>
-      <div className=" shadow-md p-4 rounded-lg ">
+      <div className="shadow-md p-4 rounded-lg">
         <Row gutter={[16, 16]}>{renderTags(timeSlots.evening)}</Row>
       </div>
     </>
